@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,11 +39,11 @@ class TransactionItem extends StatelessWidget {
               },
               icon: Icon(
                 Icons.delete,
-                color: Theme.of(context).errorColor,
+                color: Theme.of(context).colorScheme.error,
               ),
               label: Text(
                 "Delete",
-                style: TextStyle(color: Theme.of(context).errorColor),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             )
           : IconButton(
@@ -49,7 +51,7 @@ class TransactionItem extends StatelessWidget {
               onPressed: () {
                 fun(index);
               },
-              color: Theme.of(context).errorColor,
+              color: Theme.of(context).colorScheme.error,
             ),
     ));
   }

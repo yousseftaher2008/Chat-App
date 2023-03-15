@@ -1,21 +1,15 @@
-// ignore_for_file: deprecated_member_use, unused_field
+// ignore_for_file: deprecated_member_use
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
+
 import 'widgets/chart.dart';
 import 'widgets/list_transaction.dart';
 import 'widgets/new_transaction.dart';
 import 'models/transaction.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations(
-  //   [
-  //     DeviceOrientation.portraitDown,
-  //     DeviceOrientation.portraitUp,
-  //   ],
-  // );
   runApp(const MyApp());
 }
 
@@ -34,7 +28,7 @@ class MyApp extends StatelessWidget {
           textTheme: ThemeData.light().textTheme.copyWith(
                 button: const TextStyle(color: Colors.white),
               )),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }

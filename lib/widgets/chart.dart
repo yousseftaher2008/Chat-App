@@ -10,7 +10,7 @@ class Chart extends StatelessWidget {
   final List<Transaction> transactions;
   Chart(this.transactions, {super.key});
   double amountWeekSum = 0;
-  List<Map<String, Object>> get TxGroup {
+  List<Map<String, Object>> get txGroup {
     return List.generate(7, (index) {
       var weekDay = DateTime.now().subtract(Duration(days: index));
       double amountSum = 0.0;
@@ -35,7 +35,7 @@ class Chart extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: (TxGroup).map(
+          children: (txGroup).map(
             (data) {
               return Flexible(
                 fit: FlexFit.tight,
