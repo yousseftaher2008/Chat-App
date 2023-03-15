@@ -105,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Switch.adaptive(
             value: _switch,
+            
             onChanged: (value) {
               setState(() {
                 _switch = value;
