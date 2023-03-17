@@ -24,6 +24,7 @@ class CategoryMeals extends StatelessWidget {
         itemBuilder: (context, index) {
           final mealInfo = categories[index];
           return MealWidget(
+            id: mealInfo.id,
             title: mealInfo.title,
             duration: mealInfo.duration,
             imageUrl: mealInfo.imageUrl,

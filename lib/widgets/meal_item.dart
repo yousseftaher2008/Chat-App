@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '/screens/meal_detail_screen.dart';
 import '../models/meal.dart';
 
 class MealWidget extends StatelessWidget {
   const MealWidget(
-      {required this.title,
+      {
+      required this.id,
+      required this.title,
       required this.imageUrl,
       required this.duration,
       required this.affordability,
@@ -13,14 +16,47 @@ class MealWidget extends StatelessWidget {
   final Affordability affordability;
   final Complexity complexity;
   final int duration;
-  final String title, imageUrl;
+  final String title, imageUrl, id;
 
-  void selected() {}
+  void selected(BuildContext ctx) {
+    Navigator.of(ctx).pushNamed(
+      MealDetail.routeName,
+      arguments: id,
+    );
+    }
 
+  String get complexityText{
+    switch (complexity)
+    {
+      case Complexity.Simple:
+        return "Simple";
+      case Complexity.Challenging:
+        return "Challenging";
+      case Complexity.Hard:
+        return "Hard";
+      default:
+        return "unknown";
+      
+    }
+  }
+  String get affordabilityText{
+    switch (affordability)
+    {
+      case Affordability.Affordable:
+        return "Affordable";
+      case Affordability.Pricey:
+        return "Pricey";
+      case Affordability.Luxurious:
+        return "Luxurious";
+      default:
+        return "unknown";
+      
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: selected,
+      onTap: () => selected(context),
       child: Card(
         elevation: 4,
         margin: const EdgeInsets.all(10),
@@ -30,9 +66,9 @@ class MealWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
-                children: const [
-                  Icon(Icons.badge),
-                  Text("Simple"),
+                children: [
+                  const Icon(Icons.work),
+                  Text(complexityText),
                 ],
               ),
               SizedBox(
@@ -40,7 +76,10 @@ class MealWidget extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(title, style: Theme.of(context).textTheme.titleLarge,),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(75.0),
                       child: Image.network(
@@ -52,19 +91,19 @@ class MealWidget extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.access_time),
-                        Text(duration.toString()),
+                        const Icon(Icons.schedule),
+                        Text("$duration min"),
                       ],
                     ),
                   ],
                 ),
               ),
               Row(
-                    children: const [
-                      Icon(Icons.attach_money),
-                      Text("Affordable"),
-                    ],
-                  ),
+                children: [
+                  const Icon(Icons.attach_money),
+                  Text(affordabilityText),
+                ],
+              ),
             ],
           ),
         ),

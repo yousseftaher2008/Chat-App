@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+
+import '../screens/meal_detail_screen.dart';
 import '../screens/categories_screen.dart';
 import '../screens/category_meals_screen.dart';
 
@@ -35,7 +37,13 @@ class MyApp extends StatelessWidget {
             ),
       ),
       home: const Categories(),
-      routes: {CategoryMeals.routeName: (context) => const CategoryMeals()},
+      routes: {
+        CategoryMeals.routeName: (context) => const CategoryMeals(),
+        MealDetail.routeName: (context) => const MealDetail(),
+      },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (context) => const Categories());
+      },
     );
   }
 }
