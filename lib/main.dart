@@ -1,9 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:third_app/screens/settings_screen.dart';
+import 'package:third_app/screens/tabs__screen.dart';
 
 import '../screens/meal_detail_screen.dart';
-import '../screens/categories_screen.dart';
 import '../screens/category_meals_screen.dart';
 
 void main() {
@@ -31,18 +32,19 @@ class MyApp extends StatelessWidget {
               ),
               titleMedium: const TextStyle(
                 fontFamily: "RobotoCondensed",
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
       ),
-      home: const Categories(),
+      home: const TabScreen(),
       routes: {
-        CategoryMeals.routeName: (context) => const CategoryMeals(),
-        MealDetail.routeName: (context) => const MealDetail(),
+        CategoryMealsScreen.routeName: (context) => const CategoryMealsScreen(),
+        MealDetailScreen.routeName: (context) => const MealDetailScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen()
       },
       onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (context) => const Categories());
+        return MaterialPageRoute(builder: (context) => const TabScreen());
       },
     );
   }

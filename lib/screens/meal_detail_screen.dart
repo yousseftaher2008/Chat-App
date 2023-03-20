@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import '../dummy_data.dart';
 
-class MealDetail extends StatelessWidget {
-  const MealDetail({super.key});
+class MealDetailScreen extends StatelessWidget {
+  const MealDetailScreen ({super.key});
 
   static const routeName = "/meal_detail";
 
@@ -92,6 +92,9 @@ class MealDetail extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(child: const Icon(Icons.delete), onPressed: () {
+        return Navigator.of(context).pop(mealId);
+      },),
     );
   }
 }

@@ -11,18 +11,22 @@ class MealWidget extends StatelessWidget {
       required this.duration,
       required this.affordability,
       required this.complexity,
+      required this.removeMeal,
       super.key});
 
   final Affordability affordability;
   final Complexity complexity;
   final int duration;
   final String title, imageUrl, id;
+  final Function removeMeal;
 
   void selected(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
-      MealDetail.routeName,
+      MealDetailScreen.routeName,
       arguments: id,
-    );
+    ).then((result)  {
+      removeMeal(result);
+    });
     }
 
   String get complexityText{
