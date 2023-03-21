@@ -2,12 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:third_app/models/meal.dart';
-import '../dummy_data.dart';
 import '../widgets/meal_item.dart';
 
 class CategoryMealsScreen extends StatefulWidget {
-  const CategoryMealsScreen ({super.key});
-
+  const CategoryMealsScreen(this.categories, {super.key});
+  final List<Meal> categories;
   static const routeName = "/category-meals";
 
   @override
@@ -15,25 +14,26 @@ class CategoryMealsScreen extends StatefulWidget {
 }
 
 class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
+  List categoriesState = [];
   var args;
-  List<Meal> categories = [];
   var title;
-    @override
+  var id;
+  @override
   void didChangeDependencies() {
-    args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-    final id = args["id"];
+    categoriesState = widget.categories;
+    args = ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+    id = args["id"];
     title = args["title"];
-    categories = Dummy_Meal.where((meal) {
+    categoriesState = widget.categories.where((meal) {
       return meal.categories.contains(id);
     }).toList();
+
     super.didChangeDependencies();
   }
-    
-  void _removeMeal(mealId)
-  {
-    setState((){
-      categories.removeWhere((meal) => meal.id == mealId);
+
+  void _removeMeal(mealId) {
+    setState(() {
+      categoriesState.removeWhere((meal) => meal.id == mealId);
     });
   }
 
@@ -45,7 +45,7 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
       ),
       body: ListView.builder(
         itemBuilder: (context, index) {
-          final mealInfo = categories[index];
+          final mealInfo = categoriesState[index];
           return MealWidget(
             id: mealInfo.id,
             title: mealInfo.title,
@@ -53,10 +53,9 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
             imageUrl: mealInfo.imageUrl,
             affordability: mealInfo.affordability,
             complexity: mealInfo.complexity,
-            removeMeal: _removeMeal,
           );
         },
-        itemCount: categories.length,
+        itemCount: categoriesState.length,
       ),
     );
   }

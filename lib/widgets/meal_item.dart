@@ -4,34 +4,28 @@ import '../models/meal.dart';
 
 class MealWidget extends StatelessWidget {
   const MealWidget(
-      {
-      required this.id,
+      {required this.id,
       required this.title,
       required this.imageUrl,
       required this.duration,
       required this.affordability,
       required this.complexity,
-      required this.removeMeal,
       super.key});
 
   final Affordability affordability;
   final Complexity complexity;
   final int duration;
   final String title, imageUrl, id;
-  final Function removeMeal;
 
   void selected(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
       MealDetailScreen.routeName,
       arguments: id,
-    ).then((result)  {
-      removeMeal(result);
-    });
-    }
+    );
+  }
 
-  String get complexityText{
-    switch (complexity)
-    {
+  String get complexityText {
+    switch (complexity) {
       case Complexity.Simple:
         return "Simple";
       case Complexity.Challenging:
@@ -40,12 +34,11 @@ class MealWidget extends StatelessWidget {
         return "Hard";
       default:
         return "unknown";
-      
     }
   }
-  String get affordabilityText{
-    switch (affordability)
-    {
+
+  String get affordabilityText {
+    switch (affordability) {
       case Affordability.Affordable:
         return "Affordable";
       case Affordability.Pricey:
@@ -54,9 +47,9 @@ class MealWidget extends StatelessWidget {
         return "Luxurious";
       default:
         return "unknown";
-      
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(

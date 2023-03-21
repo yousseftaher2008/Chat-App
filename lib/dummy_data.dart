@@ -110,11 +110,10 @@ const Dummy_Meal = const [
   Meal(
     id: "m1",
     title: "a",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
-      "c2",
-      "c5",
     ],
     ingredients: [
       "5 tomato",
@@ -130,10 +129,10 @@ const Dummy_Meal = const [
       "cut bengal and tomato",
       "cut bengal and tomato",
     ],
-    isGlutenFree: false,
-    isLactoseFree: true,
-    isVegetarian: true,
-    isVegan: true,
+    isGlutenFree: true,
+    isLactoseFree: false,
+    isVegetarian: false,
+    isVegan: false,
     duration: 20,
     complexity: Complexity.Simple,
     affordability: Affordability.Affordable,
@@ -141,7 +140,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m2",
     title: "b",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -172,7 +172,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m3",
     title: "c",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -203,7 +204,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m4",
     title: "d",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -234,7 +236,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m5",
     title: "e",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -265,7 +268,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m6",
     title: "f",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -296,7 +300,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m7",
     title: "g",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c2",
@@ -327,7 +332,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m8",
     title: "h",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c1",
       "c4",
@@ -347,7 +353,7 @@ const Dummy_Meal = const [
       "cut bengal and tomato",
       "cut bengal and tomato",
     ],
-    isGlutenFree: true,
+    isGlutenFree: false,
     isLactoseFree: true,
     isVegetarian: true,
     isVegan: true,
@@ -358,7 +364,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m9",
     title: "i",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c10",
       "c7 ",
@@ -378,7 +385,7 @@ const Dummy_Meal = const [
       "cut bengal and tomato",
       "cut bengal and tomato",
     ],
-    isGlutenFree: true,
+    isGlutenFree: false,
     isLactoseFree: false,
     isVegetarian: true,
     isVegan: false,
@@ -389,7 +396,8 @@ const Dummy_Meal = const [
   Meal(
     id: "m10",
     title: "j",
-    imageUrl: "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
+    imageUrl:
+        "https://www.archanaskitchen.com/images/archanaskitchen/10-Brands/DelMonte-KidsRecipes/Spaghetti_Pasta_Recipe_In_Creamy_Tomato_Sauce_-_Kids_Recipes_Made_With_Del_Monte-3.jpg",
     categories: [
       "c9",
       "c4",

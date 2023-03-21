@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:third_app/widgets/main_drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen(this._settings, this.change, {super.key});
+  final Function change;
+  final Map _settings;
   static const routeName = "/settings";
 
   @override
@@ -9,11 +12,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  var isGlutenFree = false;
-  var isLactoseFree = false;
-  var isVegetarian = false;
-  var isVegan = false;
-
   Widget buildSwitchListTile(
       String title, bool isAble, void Function(bool) fun) {
     return SwitchListTile(
@@ -29,7 +27,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              widget.change({
+                'gluten': widget._settings["gluten"],
+                'lactose': widget._settings["lactose"],
+                'vegan': widget._settings["vegan"],
+                'vegetarian': widget._settings["vegetarian"],
+              });
+            },
+            icon: const Icon(Icons.save_alt_outlined),
+          )
+        ],
       ),
+      drawer: const MainDrawer(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -45,44 +57,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 buildSwitchListTile(
                   "Gluten-free",
-                  isGlutenFree,
+                  widget._settings["gluten"]!,
                   (value) {
                     setState(
                       () {
-                        isGlutenFree = value;
+                        widget._settings["gluten"] = value;
                       },
                     );
                   },
                 ),
                 buildSwitchListTile(
                   "Lactose-free",
-                  isLactoseFree,
+                  widget._settings["lactose"]!,
                   (value) {
                     setState(
                       () {
-                        isLactoseFree = value;
+                        widget._settings["lactose"] = value;
                       },
                     );
                   },
                 ),
                 buildSwitchListTile(
                   "Vegetarian",
-                  isVegetarian,
+                  widget._settings["vegetarian"]!,
                   (value) {
                     setState(
                       () {
-                        isVegetarian = value;
+                        widget._settings["vegetarian"] = value;
                       },
                     );
                   },
                 ),
                 buildSwitchListTile(
                   "Vegan",
-                  isVegan,
+                  widget._settings["vegan"]!,
                   (value) {
                     setState(
                       () {
-                        isVegan = value;
+                        widget._settings["vegan"] = value;
                       },
                     );
                   },
