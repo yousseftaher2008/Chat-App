@@ -1,4 +1,4 @@
-name: third_app
+name: shop
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -31,6 +31,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.0.5
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -76,22 +77,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Raleway
+    - family: Lato
       fonts:
-        - asset: assets/fonts/Raleway-Regular.ttf
-        - asset: assets/fonts/Raleway-Bold.ttf
+        - asset: assets/fonts/Lato-Regular.ttf
+        - asset: assets/fonts/Lato-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Raleway-black.ttf
-          weight: 900
-    - family: RobotoCondensed
+    - family: Anton
       fonts:
-        - asset: assets/fonts/RobotoCondensed-Regular.ttf
-        - asset: assets/fonts/RobotoCondensed-Bold.ttf
+        - asset: assets/fonts/Anton-Regular.ttf
           weight: 700
-        - asset: assets/fonts/RobotoCondensed-Light.ttf
-          weight: 300
-        - asset: assets/fonts/RobotoCondensed-Italic.ttf
-          style: italic
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -1,4 +1,4 @@
-# third_app
+# shop
 
 A new Flutter project.
 
