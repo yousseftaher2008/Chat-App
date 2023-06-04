@@ -1,3 +1,4 @@
+import: package:lint/analysis_options.yaml
 # This file configures the analyzer, which statically analyzes Dart code to
 # check for errors, warnings, and lints.
 #
@@ -7,7 +8,6 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -22,8 +22,43 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-
+    avoid_print: true  # Uncomment to disable the `avoid_print` rule
+    always_declare_return_types: false # Uncomment to disable the `always_declare_return_types` rule
+    cancel_subscriptions: true # Uncomment to disable the `always_declare_return_types` rule
+    close_sinks: true # Uncomment to disable the `close_sinks` rule
+    comment_references: true # Uncomment to disable the `comment_references` rule
+    one_member_abstracts: true # Uncomment to disable the `one_member_abstracts` rule
+    only_throw_errors: true # Uncomment to disable the `only_throw_errors` rule
+    package_api_docs: true # Uncomment to disable the `package_api_docs` rule
+    prefer_final_in_for_each: true # Uncomment to disable the `prefer_final_in_for_each` rule
+    empty_statements: true # Uncomment to disable the `empty_statements` rule
+    unnecessary_const: true # Uncomment to disable the `unnecessary_const` rule
+    prefer_const_literals_to_create_immutables: true # Uncomment to disable the `prefer_const_literals` rule
+    prefer_const_declarations: true # Uncomment to disable the `prefer_const_declarations` rule
+    prefer_const_constructors_in_immutables: true # Uncomment to disable the `prefer_const_constructors_in_immutables` rule
+    prefer_const_constructors: true # Uncomment to disable the `prefer_const_constructors` rule
+    use_key_in_widget_constructors: true # Uncomment to disable the `use_key_in_widget_constructors` rule
+    always_put_required_named_parameters_first: true # Uncomment to disable the `always_put_required_named_parameters_first` rule
+    annotate_overrides: true # Uncomment to disable the `annotate_overrides` rule
+    avoid_unnecessary_containers: true # Uncomment to disable the `avoid_unnecessary_containers` rule
+    avoid_unused_constructor_parameters: true # Uncomment to disable the `avoid_unused_constructor_parameters` rule
+    avoid_void_async: true # Uncomment to disable the `avoid_void_async` rule
+    await_only_futures: true # Uncomment to disable the `await_only_futures` rule
+    camel_case_types: true # Uncomment to disable the `camel_case_types` rule
+    missing_whitespace_between_adjacent_strings: true # Uncomment to disable the `missing_whitespace_between_adjacent_strings` rule
+    prefer_conditional_assignment: true # Uncomment to disable the `prefer_conditional_assignment` rule
+    prefer_foreach: true # Uncomment to disable the `prefer_foreach` rule
+    prefer_is_empty: true # Uncomment to disable the `prefer_is_empty` rule
+    prefer_is_not_empty: true # Uncomment to disable the `prefer_is_not_empty` rule
+    unawaited_futures: true # Uncomment to disable teh `unawaited_futures` rule
+    unnecessary_await_in_return: true # Uncomment to disable teh `unnecessary_await_in_return` rule
+    unnecessary_constructor_name: true # Uncomment to disable teh `unnecessary_constructor_name` rule
+    unnecessary_getters_setters: true # Uncomment to disable teh `unnecessary_getters_setters` rule
+    unnecessary_late: true # Uncomment to disable teh `unnecessary_late` rule
+    unnecessary_new: true # Uncomment to disable teh `unnecessary_new` rule
+    unnecessary_overrides: true # Uncomment to disable teh `unnecessary_overrides` rule
+    unnecessary_raw_strings: true # Uncomment to disable teh `unnecessary_raw_strings` rule
+    unnecessary_this: true # Uncomment to disable teh `v` rule
+    use_enums: true # Uncomment to disable teh `use_enums` rule
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

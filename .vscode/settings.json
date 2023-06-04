@@ -1,0 +1,11 @@
+{
+    "cSpell.words": [
+        "chating",
+        "firestore",
+        "unawaited"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "editor.fontFamily": "Fira code",
+    "editor.fontSize": 18,
+    "git.ignoreLimitWarning": true
+}
