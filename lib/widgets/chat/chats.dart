@@ -55,6 +55,51 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
       String? userId2,
     ]) {
       return GestureDetector(
+        onLongPress: !isGroup
+            ? () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text("Do you want to block $chatName"),
+                    actions: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              "NO",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              usersProvider.blockUser(chatId);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              "Yes",
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              }
+            : () {},
         onTap: () {
           Navigator.of(context).pushNamed(
             ChatScreen.routeName,

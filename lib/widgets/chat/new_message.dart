@@ -1,5 +1,4 @@
 import "dart:io";
-import "dart:math";
 
 import "package:chat_app/providers/users_providers.dart";
 import "package:flutter/material.dart";
@@ -56,15 +55,7 @@ class _NewMessageState extends State<NewMessage> {
       source,
     );
     if (image != null) {
-      const _chars =
-          "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
-      Random _rnd = Random();
-
-      String getRandomString(int length) =>
-          String.fromCharCodes(Iterable.generate(
-              length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-
-      final String id = getRandomString(20);
+      final String id = usersProvider.generateChatId();
       final url = await usersProvider.sendFile(image, id);
       await _sendMessage("photo", url, id);
     }
@@ -78,12 +69,12 @@ class _NewMessageState extends State<NewMessage> {
         margin: const EdgeInsets.only(top: 8),
         padding: const EdgeInsets.all(8),
         child: _isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 150,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     CircularProgressIndicator(),
                     SizedBox(width: 10),
                     Text("Reload the photo...")

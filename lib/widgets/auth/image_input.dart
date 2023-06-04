@@ -31,17 +31,17 @@ class _ImageInputState extends State<ImageInput> {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 150,
+        height: 100,
         child: Column(
           children: [
             _storedImage != null
                 ? CircleAvatar(
-                    radius: 50,
+                    radius: 30,
                     backgroundImage: FileImage(_storedImage!),
                     backgroundColor: Colors.transparent,
                   )
                 : CircleAvatar(
-                    radius: 50,
+                    radius: 30,
                     child: Image.asset("assets/user.png"),
                     backgroundColor: Colors.transparent,
                   ),

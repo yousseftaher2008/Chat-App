@@ -6,10 +6,15 @@ import 'package:provider/provider.dart';
 import '../widgets/chat/chat_item.dart';
 import 'chats_screen.dart';
 
-class GroupScreen extends StatelessWidget {
+class GroupScreen extends StatefulWidget {
   const GroupScreen({super.key});
   static const String routeName = "group_screen";
 
+  @override
+  State<GroupScreen> createState() => _GroupScreenState();
+}
+
+class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
@@ -235,6 +240,8 @@ class GroupScreen extends StatelessWidget {
                             groupId,
                           );
 
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
                           await Navigator.of(context)
                               .pushReplacementNamed(ChatsScreen.routeName);
                         }
@@ -245,7 +252,9 @@ class GroupScreen extends StatelessWidget {
                             style: TextStyle(color: Colors.red)),
                       ),
                     ),
-                    const Divider(),
+                    const Divider(
+                      color: Colors.black,
+                    ),
                     if (creator)
                       GestureDetector(
                         onTap: () async {
@@ -255,14 +264,16 @@ class GroupScreen extends StatelessWidget {
                               title: const Text("Are You Sure?"),
                               actions: [
                                 ElevatedButton(
-                                    onPressed: () async {
-                                      await usersProvider.deleteChat(groupId);
-                                      await Navigator.of(context)
-                                          .pushReplacementNamed(
-                                              ChatsScreen.routeName);
-                                      Navigator.of(ctx).pop();
-                                    },
-                                    child: const Text("Sure"))
+                                  onPressed: () async {
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
+                                    await Navigator.of(context)
+                                        .pushReplacementNamed(
+                                            ChatsScreen.routeName);
+                                    await usersProvider.deleteChat(groupId);
+                                  },
+                                  child: const Text("Sure"),
+                                )
                               ],
                             ),
                           );

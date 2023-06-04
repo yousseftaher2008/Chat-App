@@ -1,5 +1,7 @@
 import "dart:io";
+import "dart:math";
 
+import "package:chat_app/widgets/chat/chats.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/foundation.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -10,7 +12,7 @@ import "package:image_picker/image_picker.dart";
 class UsersProvider with ChangeNotifier {
   String _userId = "";
   int count = 0;
-
+  List<String> _tokenUsers = [];
   String get userId => _userId;
 
   Future<dynamic> isFriend(String id) async {
@@ -376,5 +378,66 @@ class UsersProvider with ChangeNotifier {
     await ref.putFile(file);
     final url = await ref.getDownloadURL();
     return url;
+  }
+
+  List<String> get tokenUsers {
+    return _tokenUsers;
+  }
+
+  void updateTokenUsers(List<String> newTokenUsers) {
+    _tokenUsers = newTokenUsers;
+
+    notifyListeners();
+  }
+
+  String generateChatId() {
+    const _chars =
+        "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+    Random _rnd = Random();
+
+    String getRandomString(int length) =>
+        String.fromCharCodes(Iterable.generate(
+            length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+    return getRandomString(20);
+  }
+
+  Future<void> createGroup(
+      String chatId, Map<String, dynamic> groupData) async {
+    await FirebaseFirestore.instance
+        .collection("/chats")
+        .doc(chatId)
+        .set(groupData);
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> fuChat(String id) =>
+      FirebaseFirestore.instance.collection("/chats").doc(id).get();
+
+  Future<void> blockUser(String id) async {
+    final user = await FirebaseFirestore.instance
+        .collection("/users")
+        .doc(_userId)
+        .get();
+    final List userFriends = user["friends"];
+    final List userBlocks = user["blocks"];
+
+    int index = -1;
+    String userId = "";
+
+    for (int i = 0; i < userFriends.length; i++) {
+      if (userFriends[i]["chat"] == id) {
+        userId = userFriends[i]["friend"];
+        index = i;
+      }
+    }
+    if (index != -1) {
+      await FirebaseFirestore.instance.collection("/chats").doc(id).delete();
+
+      userFriends.removeAt(index);
+      userBlocks.add(userId);
+      await FirebaseFirestore.instance
+          .collection("/users")
+          .doc(_userId)
+          .update({"friends": userFriends, "blocks": userBlocks});
+    }
   }
 }

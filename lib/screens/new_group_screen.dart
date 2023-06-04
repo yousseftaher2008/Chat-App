@@ -1,6 +1,12 @@
+import "dart:io";
+
+import "package:chat_app/providers/users_providers.dart";
+import "package:chat_app/screens/profile_screen.dart";
 import "package:chat_app/widgets/auth/image_input.dart";
 import "package:chat_app/widgets/search/search.dart";
+import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "/screens/chats_screen.dart";
 import "package:connectivity_plus/connectivity_plus.dart";
 
@@ -16,6 +22,9 @@ class NewGroupScreen extends StatefulWidget {
 class _NewGroupScreenState extends State<NewGroupScreen> {
   @override
   Widget build(BuildContext context) {
+    File? storedImage;
+    final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
+    String? groupName;
     final controller = TextEditingController();
     final AppBar appBar = AppBar(
       title: const Text("New Group"),
@@ -25,7 +34,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
         appBar.preferredSize.height;
     return StreamBuilder<ConnectivityResult>(
         stream: Connectivity().onConnectivityChanged,
-        builder: (context, connection) {
+        builder: (_, connection) {
           if (connection.data == ConnectivityResult.none) {
             Navigator.of(context).pushReplacementNamed(ChatsScreen.routeName);
           }
@@ -61,36 +70,116 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
              */
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: FloatingActionButton(
-              child: const Icon(Icons.arrow_forward),
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (ctx) {
-                      return Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          right: 15,
-                          left: 15,
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ImageInput(
-                              (image) {},
-                            ),
-                            const Expanded(
-                                child: TextField(
-                              decoration:
-                                  InputDecoration(labelText: "GroupName"),
-                            )),
-                          ],
-                        ),
-                      );
-                    });
-              },
-            ),
+            floatingActionButton: usersProvider.tokenUsers != 0
+                ? FloatingActionButton(
+                    child: const Icon(Icons.arrow_forward),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) {
+                            bool loading = false;
+                            return Container(
+                              margin: EdgeInsets.only(
+                                top: 15,
+                                right: 15,
+                                left: 15,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        ImageInput(
+                                          (image) {
+                                            setState(() {
+                                              storedImage = image;
+                                            });
+                                          },
+                                        ),
+                                        Expanded(
+                                            child: TextField(
+                                          decoration: const InputDecoration(
+                                              labelText: "GroupName"),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              groupName = value;
+                                            });
+                                          },
+                                        )),
+                                      ],
+                                    ),
+                                    if (loading)
+                                      const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    if (!loading)
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              loading = true;
+                                            });
+                                            if (groupName != null) {
+                                              final String currentUser =
+                                                  usersProvider.userId;
+                                              late final url;
+                                              late final ref;
+                                              final String chatId =
+                                                  usersProvider
+                                                      .generateChatId();
+                                              if (storedImage == null) {
+                                                ref = FirebaseStorage.instance
+                                                    .ref()
+                                                    .child("users_images")
+                                                    .child("user.png");
+                                                url =
+                                                    await ref.getDownloadURL();
+                                              } else {
+                                                url = await usersProvider
+                                                    .sendFile(
+                                                        storedImage!, chatId);
+                                                ref = FirebaseStorage.instance
+                                                    .ref()
+                                                    .child("users_images")
+                                                    .child(chatId);
+                                              }
+
+                                              await usersProvider
+                                                  .createGroup(chatId, {
+                                                "groupName": groupName,
+                                                "groupImage": url,
+                                                "creator": currentUser,
+                                                "type": "group",
+                                                "members": [
+                                                  currentUser,
+                                                  ...usersProvider.tokenUsers,
+                                                ],
+                                                "admins": [
+                                                  currentUser,
+                                                ],
+                                                "lastMessage": "",
+                                                "lastMessageAt": "",
+                                              });
+                                              setState(() {
+                                                loading = true;
+                                              });
+                                              Navigator.of(context).popUntil(
+                                                  (route) => route.isFirst);
+                                              await Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      ChatsScreen.routeName);
+                                            }
+                                          },
+                                          child: const Text("Create Group"))
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                  )
+                : Container(),
           );
         });
   }

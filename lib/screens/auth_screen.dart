@@ -9,6 +9,8 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
 
+import "chats_screen.dart";
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
   static const routeName = "/auth_screen";
@@ -62,6 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
           "image_url": url,
         });
       }
+      await Navigator.of(context).pushReplacementNamed(ChatsScreen.routeName);
     } on FirebaseAuthException catch (err) {
       String message = "An error occurred, please try again";
       if (err.message != null) {

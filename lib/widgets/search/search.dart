@@ -20,6 +20,7 @@ class _SearchState extends State<Search> {
 
   String? chatId;
   final List tokenUsers = [];
+  final List<String> tokenUsersIds = [];
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,9 @@ class _SearchState extends State<Search> {
                                 if (widget.onlyFriends) {
                                   setState(() {
                                     tokenUsers.add(searchedUser);
+                                    tokenUsersIds.add(searchedUser.id);
+                                    usersProvider
+                                        .updateTokenUsers(tokenUsersIds);
                                   });
                                 } else {
                                   if (isBlock.data! == false) {
@@ -84,6 +88,11 @@ class _SearchState extends State<Search> {
                                   }
                                 }
                               },
+                              onLongPress: isBlock == true
+                                  ? () {
+                                      /* todo: unblock the user */
+                                    }
+                                  : () {},
                               child: isFriend.data == false
                                   ? ChatItem(
                                       searchedUser["username"],
@@ -103,8 +112,9 @@ class _SearchState extends State<Search> {
                                             searchedUser["image_url"],
                                             true,
                                             "user.png",
-                                            lastMessage:
-                                                chat.data!["lastMessage"],
+                                            lastMessage: widget.onlyFriends
+                                                ? ""
+                                                : chat.data!["lastMessage"],
                                             isBlock: isBlock.data,
                                           );
                                         }
@@ -127,10 +137,10 @@ class _SearchState extends State<Search> {
       stream: usersProvider.users,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+          return Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 CircularProgressIndicator(),
                 Text("Loading..."),
               ],
@@ -176,7 +186,7 @@ class _SearchState extends State<Search> {
               for (final tokenUser in tokenUsers) {
                 widgets.add(
                   Container(
-                    margin: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(3),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -185,7 +195,6 @@ class _SearchState extends State<Search> {
                           backgroundImage: NetworkImage(tokenUser["image_url"]),
                           backgroundColor: Colors.transparent,
                         ),
-                        const SizedBox(width: 5),
                         Text(
                           tokenUser["username"],
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -194,6 +203,8 @@ class _SearchState extends State<Search> {
                             onPressed: () {
                               setState(() {
                                 tokenUsers.remove(tokenUser);
+                                tokenUsersIds.remove(tokenUser.id);
+                                usersProvider.updateTokenUsers(tokenUsersIds);
                               });
                             },
                             icon: const Icon(Icons.clear))
@@ -214,18 +225,15 @@ class _SearchState extends State<Search> {
                           decoration: BoxDecoration(
                             border: Border.all(width: 2, color: Colors.black),
                           ),
+                          width: double.infinity,
                           margin: const EdgeInsets.all(5),
                           /*
-                          todo:
-                          add a child property with the best view 
-                          */
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: widgets,
-                              ),
-                            ],
+                        todo:
+                        add a child property with the best view 
+                        */
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            children: widgets,
                           ),
                         ),
                         usersWidget(searchedUsers),
