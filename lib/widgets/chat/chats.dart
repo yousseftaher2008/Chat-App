@@ -7,22 +7,22 @@ import "../../screens/chat_screen.dart";
 
 // ignore: must_be_immutable
 class Chats extends StatefulWidget {
-  Chats({super.key});
-  bool isInit = false;
+  const Chats({super.key});
   @override
   State<Chats> createState() => _ChatsState();
 }
 
 class _ChatsState extends State<Chats> with WidgetsBindingObserver {
+  bool isInit = false;
   late UsersProvider usersProvider;
   bool? _isConnected;
   @override
   void didChangeDependencies() {
-    if (!widget.isInit) {
+    if (!isInit) {
       usersProvider = Provider.of<UsersProvider>(context, listen: false);
       usersProvider.setStatus("online");
       WidgetsBinding.instance.addObserver(this);
-      widget.isInit = true;
+      isInit = true;
     }
     super.didChangeDependencies();
   }

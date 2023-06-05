@@ -61,12 +61,6 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 ),
               ),
             ),
-            /*
-            todo:
-             takes users functionality
-             if users take more than one
-             add a group image fun
-             */
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: usersProvider.tokenUsers.isNotEmpty
@@ -96,6 +90,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                                               storedImage = image;
                                             });
                                           },
+                                          assetImage: "group.jpg",
                                         ),
                                         Expanded(
                                             child: TextField(
@@ -131,7 +126,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                                                 ref = FirebaseStorage.instance
                                                     .ref()
                                                     .child("users_images")
-                                                    .child("user.png");
+                                                    .child("group.jpg");
                                                 url =
                                                     await ref.getDownloadURL();
                                               } else {

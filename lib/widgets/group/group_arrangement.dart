@@ -87,7 +87,6 @@ class GroupArrangement {
                       image.data!,
                       true,
                       "user.png",
-                      lastMessage: "",
                       isAdmin: admin,
                     );
                   }
@@ -168,7 +167,6 @@ class GroupArrangement {
                                       user["image_url"],
                                       true,
                                       "user.png",
-                                      lastMessage: "",
                                       isAdmin: admin,
                                       isBlock: isBlock[0],
                                       isHeBlock: isBlock[1],
@@ -180,19 +178,21 @@ class GroupArrangement {
                                           }
                                         : null,
                                     onTap: () {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
-                                      Navigator.of(context).pushNamed(
-                                        ChatScreen.routeName,
-                                        arguments: {
-                                          "chatName": user["username"],
-                                          "image": user["image_url"],
-                                          "type": "private",
-                                          "userId": member,
-                                          "status": user["status"],
-                                          "chatId": isFriend,
-                                        },
-                                      );
+                                      if (!isBlock[0] && !isBlock[1]) {
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                        Navigator.of(context).pushNamed(
+                                          ChatScreen.routeName,
+                                          arguments: {
+                                            "chatName": user["username"],
+                                            "image": user["image_url"],
+                                            "type": "private",
+                                            "userId": member,
+                                            "status": user["status"],
+                                            "chatId": isFriend,
+                                          },
+                                        );
+                                      }
                                     },
                                   );
                                 }
@@ -235,7 +235,7 @@ class GroupArrangement {
                                   isBlockData.connectionState !=
                                       ConnectionState.waiting) {
                                 final isBlock = isBlockData.data!;
-                                if (isBlock == false) {
+                                if (!isBlock[0] && !isBlock[1]) {
                                   if (isFriend == false) {
                                     return GestureDetector(
                                       onLongPress: currentCreator
@@ -249,7 +249,6 @@ class GroupArrangement {
                                         user["image_url"],
                                         true,
                                         "user.png",
-                                        lastMessage: "",
                                         isAdmin: admin,
                                         isBlock: isBlock[0],
                                         isHeBlock: isBlock[1],
@@ -262,7 +261,6 @@ class GroupArrangement {
                                         user["image_url"],
                                         true,
                                         "user.png",
-                                        lastMessage: "",
                                         isAdmin: admin,
                                         isBlock: isBlock[0],
                                         isHeBlock: isBlock[1],
@@ -316,7 +314,7 @@ class GroupArrangement {
               if (isBlockData.hasData &&
                   isBlockData.connectionState != ConnectionState.waiting) {
                 final isBlock = isBlockData.data!;
-                if (isBlock != false) {
+                if (isBlock[0] || isBlock[1]) {
                   return StreamBuilder(
                       stream: usersProvider.user(member),
                       builder: (context, userData) {

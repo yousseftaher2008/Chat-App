@@ -1,3 +1,9 @@
+/*
+todo: 
+  make a delete all messages function in actions
+  block user action in actions
+*/
+
 import "package:chat_app/screens/group_screen.dart";
 import "../screens/profile_screen.dart";
 import "../widgets/chat/messages.dart";
@@ -59,6 +65,61 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
               ],
             ),
+      actions: [
+        DropdownButton(
+          underline: Container(),
+          items: const [
+            DropdownMenuItem(
+              value: "group",
+              child: Row(children: [
+                Icon(
+                  Icons.group_add,
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text("New Group"),
+              ]),
+            ),
+            DropdownMenuItem(
+              value: "profile",
+              child: Row(children: [
+                Icon(
+                  Icons.manage_accounts,
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text("My Profile"),
+              ]),
+            ),
+            DropdownMenuItem(
+              value: "logout",
+              child: Row(children: [
+                Icon(
+                  Icons.exit_to_app,
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text("logout"),
+              ]),
+            ),
+          ],
+          onChanged: (itemIdentifier) async {
+            if (itemIdentifier == "logout") {
+            } else if (itemIdentifier == "profile") {
+            } else if (itemIdentifier == "group") {}
+          },
+          icon: Icon(
+            Icons.more_vert,
+            color: Theme.of(context).primaryIconTheme.color,
+          ),
+        )
+      ],
     );
     final MediaQueryData mediaQuery = MediaQuery.of(context);
     return Scaffold(

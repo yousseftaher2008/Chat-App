@@ -55,7 +55,7 @@ class _SearchState extends State<Search> {
                           }
                           if (isFriend.hasData) {
                             return GestureDetector(
-                              onLongPress: isFriend.data! != false
+                              onLongPress: isFriend.data != false
                                   ? () {
                                       showDialog(
                                         context: context,
@@ -109,7 +109,7 @@ class _SearchState extends State<Search> {
                                     }
                                   : () {},
                               onTap: () async {
-                                if (widget.onlyFriends) {
+                                if (widget.onlyFriends == true) {
                                   setState(() {
                                     tokenUsers.add(searchedUser);
                                     tokenUsersIds.add(searchedUser.id);
@@ -117,7 +117,7 @@ class _SearchState extends State<Search> {
                                         .updateTokenUsers(tokenUsersIds);
                                   });
                                 } else {
-                                  if (isBlock.data! == false) {
+                                  if (!isBlock.data![0] && !isBlock.data![1]) {
                                     var result;
                                     if (isFriend.data == false) {
                                       result = await usersProvider
@@ -140,10 +140,56 @@ class _SearchState extends State<Search> {
                                       },
                                     );
                                   } else {
-                                    // todo:showDialog
-                                    await usersProvider
-                                        .unBlock(searchedUser.id);
-                                    setState(() {});
+                                    if (isBlock.data![0]) {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text(
+                                              "Do you want to un block ${searchedUser["username"]}"),
+                                          actions: [
+                                            Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                  child: const Text(
+                                                    "NO",
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    await usersProvider.unBlock(
+                                                        searchedUser.id);
+                                                    Navigator.of(ctx).pop();
+                                                    setState(() {});
+                                                  },
+                                                  child: const Text(
+                                                    "Yes",
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
                                   }
                                 }
                               },
@@ -283,10 +329,6 @@ class _SearchState extends State<Search> {
                           ),
                           width: double.infinity,
                           margin: const EdgeInsets.all(5),
-                          /*
-                        todo:
-                        add a child property with the best view 
-                        */
                           child: Wrap(
                             direction: Axis.horizontal,
                             children: widgets,

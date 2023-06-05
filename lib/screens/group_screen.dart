@@ -74,8 +74,12 @@ class _GroupScreenState extends State<GroupScreen> {
                                     ),
                                   );
                                 },
-                                child: ChatItem(friend["username"],
-                                    friend["image_url"], false, "user.png"),
+                                child: ChatItem(
+                                  friend["username"],
+                                  friend["image_url"],
+                                  true,
+                                  "user.png",
+                                ),
                               ),
                             );
                           }
@@ -140,7 +144,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(75),
                         child: FadeInImage(
-                          placeholder: const AssetImage('assets/user.png'),
+                          placeholder: const AssetImage('assets/group.jpg'),
                           image: NetworkImage(doc["groupImage"]),
                           fit: BoxFit.cover,
                         ),
@@ -252,9 +256,10 @@ class _GroupScreenState extends State<GroupScreen> {
                             style: TextStyle(color: Colors.red)),
                       ),
                     ),
-                    const Divider(
-                      color: Colors.black,
-                    ),
+                    if (creator)
+                      const Divider(
+                        color: Colors.black,
+                      ),
                     if (creator)
                       GestureDetector(
                         onTap: () async {

@@ -6,9 +6,10 @@ import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
 
 class ImageInput extends StatefulWidget {
-  const ImageInput(this.onSelected, {super.key});
+  const ImageInput(this.onSelected, {this.assetImage = "user.png", super.key});
 
   final void Function(File image) onSelected;
+  final String assetImage;
   @override
   State<ImageInput> createState() => _ImageInputState();
 }
@@ -42,7 +43,7 @@ class _ImageInputState extends State<ImageInput> {
                   )
                 : CircleAvatar(
                     radius: 30,
-                    child: Image.asset("assets/user.png"),
+                    child: Image.asset("assets/${widget.assetImage}"),
                     backgroundColor: Colors.transparent,
                   ),
             Expanded(

@@ -440,9 +440,12 @@ class UsersProvider with ChangeNotifier {
               .doc(userId)
               .get();
       final List friends2 = (user2["friends"] as List);
-      final List blockFrom = (user2["blockFrom"] as List);
-      friends2.remove({"chat": chatId, "friend": _userId});
-      blockFrom.add(_userId);
+      for (int i = 0; i < friends2.length; i++) {
+        if (friends2[i]["friend"] == _userId) {
+          index = i;
+        }
+      }
+      friends2.removeAt(index);
       await FirebaseFirestore.instance.collection("/users").doc(userId).update({
         "friends": friends2,
       });
