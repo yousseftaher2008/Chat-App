@@ -1,7 +1,6 @@
 import "dart:io";
 import "dart:math";
 
-import "package:chat_app/widgets/chat/chats.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/foundation.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -44,7 +43,7 @@ class UsersProvider with ChangeNotifier {
     return isAdmin;
   }
 
-  Future<dynamic> isBlock(String id) async {
+  Future<List<bool>> isBlock(String id) async {
     bool _isFound = false;
     bool _isHeFound = false;
     final blocks =
@@ -65,11 +64,7 @@ class UsersProvider with ChangeNotifier {
         }
       }
     }
-    return _isFound
-        ? true
-        : _isHeFound
-            ? ""
-            : false;
+    return [_isFound, _isHeFound];
   }
 
   Future<bool> isGroup(chatId) async {
@@ -412,7 +407,7 @@ class UsersProvider with ChangeNotifier {
   Future<DocumentSnapshot<Map<String, dynamic>>> fuChat(String id) =>
       FirebaseFirestore.instance.collection("/chats").doc(id).get();
 
-  Future<void> blockUser(String id) async {
+  Future<void> blockUser(String userId) async {
     final user = await FirebaseFirestore.instance
         .collection("/users")
         .doc(_userId)
@@ -421,23 +416,53 @@ class UsersProvider with ChangeNotifier {
     final List userBlocks = user["blocks"];
 
     int index = -1;
-    String userId = "";
+    String chatId = "";
 
     for (int i = 0; i < userFriends.length; i++) {
-      if (userFriends[i]["chat"] == id) {
-        userId = userFriends[i]["friend"];
+      if (userFriends[i]["friend"] == userId) {
+        chatId = userFriends[i]["chat"];
         index = i;
       }
     }
     if (index != -1) {
-      await FirebaseFirestore.instance.collection("/chats").doc(id).delete();
-
+      //remove the user2 friend from current user
       userFriends.removeAt(index);
       userBlocks.add(userId);
       await FirebaseFirestore.instance
           .collection("/users")
           .doc(_userId)
           .update({"friends": userFriends, "blocks": userBlocks});
+
+      //remove the current user friend from user2
+      final DocumentSnapshot<Map<String, dynamic>> user2 =
+          await FirebaseFirestore.instance
+              .collection("/users")
+              .doc(userId)
+              .get();
+      final List friends2 = (user2["friends"] as List);
+      final List blockFrom = (user2["blockFrom"] as List);
+      friends2.remove({"chat": chatId, "friend": _userId});
+      blockFrom.add(_userId);
+      await FirebaseFirestore.instance.collection("/users").doc(userId).update({
+        "friends": friends2,
+      });
+
+      await FirebaseFirestore.instance
+          .collection("/chats")
+          .doc(chatId)
+          .delete();
     }
+  }
+
+  Future<void> unBlock(String id) async {
+    final userData = await FirebaseFirestore.instance
+        .collection("/users")
+        .doc(_userId)
+        .get();
+    final List userBlocks = userData['blocks'];
+    userBlocks.remove(id);
+    await FirebaseFirestore.instance.collection("/users").doc(_userId).update({
+      "blocks": userBlocks,
+    });
   }
 }

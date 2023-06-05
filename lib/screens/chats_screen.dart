@@ -16,10 +16,10 @@ class ChatsScreen extends StatelessWidget {
         appBar: AppBar(title: const Text("Chat App"), actions: [
           DropdownButton(
             underline: Container(),
-            items: [
+            items: const [
               DropdownMenuItem(
                 value: "group",
-                child: Row(children: const [
+                child: Row(children: [
                   Icon(
                     Icons.group_add,
                     color: Colors.black,
@@ -32,7 +32,7 @@ class ChatsScreen extends StatelessWidget {
               ),
               DropdownMenuItem(
                 value: "profile",
-                child: Row(children: const [
+                child: Row(children: [
                   Icon(
                     Icons.manage_accounts,
                     color: Colors.black,
@@ -45,7 +45,7 @@ class ChatsScreen extends StatelessWidget {
               ),
               DropdownMenuItem(
                 value: "logout",
-                child: Row(children: const [
+                child: Row(children: [
                   Icon(
                     Icons.exit_to_app,
                     color: Colors.black,

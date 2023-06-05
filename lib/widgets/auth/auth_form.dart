@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import "image_input.dart";
 
 class AuthForm extends StatefulWidget {
-  const AuthForm(this.submit, {super.key});
+  const AuthForm(this.submit, this.scaffoldKey, {super.key});
   final Future<void> Function(
     String email,
     String password,
@@ -12,6 +12,7 @@ class AuthForm extends StatefulWidget {
     File? pickedImage,
     bool isLogin,
   ) submit;
+  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<AuthForm> createState() => _AuthFormState();
 }
@@ -38,7 +39,9 @@ class _AuthFormState extends State<AuthForm> {
       _pickedImage = File("unknown");
     }
     _form.currentState!.save();
-    FocusScope.of(context).unfocus();
+    if (widget.scaffoldKey.currentContext != null) {
+      FocusScope.of(widget.scaffoldKey.currentContext!).unfocus();
+    }
     setState(() {
       _isLoading = true;
     });
@@ -53,12 +56,6 @@ class _AuthFormState extends State<AuthForm> {
     setState(() {
       _isLoading = false;
     });
-  }
-
-  @override
-  void dispose() {
-    _pickedImage ?? _pickedImage!.delete();
-    super.dispose();
   }
 
   @override

@@ -56,8 +56,8 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
     ]) {
       return GestureDetector(
         onLongPress: !isGroup
-            ? () {
-                showDialog(
+            ? () async {
+                await showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: Text("Do you want to block $chatName"),
@@ -80,8 +80,8 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {
-                              usersProvider.blockUser(chatId);
+                            onPressed: () async {
+                              await usersProvider.blockUser(userId2!);
                               Navigator.of(context).pop();
                             },
                             child: const Text(

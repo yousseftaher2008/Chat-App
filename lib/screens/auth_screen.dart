@@ -19,6 +19,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Future<void> _submit(
     String email,
     String password,
@@ -90,7 +91,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body: AuthForm(_submit),
+        body: AuthForm(_submit, _scaffoldKey),
       );
 }

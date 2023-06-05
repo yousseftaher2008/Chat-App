@@ -1,7 +1,6 @@
 import "dart:io";
 
 import "package:chat_app/providers/users_providers.dart";
-import "package:chat_app/screens/profile_screen.dart";
 import "package:chat_app/widgets/auth/image_input.dart";
 import "package:chat_app/widgets/search/search.dart";
 import "package:firebase_storage/firebase_storage.dart";
@@ -20,15 +19,15 @@ class NewGroupScreen extends StatefulWidget {
 }
 
 class _NewGroupScreenState extends State<NewGroupScreen> {
+  final controller = TextEditingController();
+  File? storedImage;
+  String? groupName;
+  final AppBar appBar = AppBar(
+    title: const Text("New Group"),
+  );
   @override
   Widget build(BuildContext context) {
-    File? storedImage;
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
-    String? groupName;
-    final controller = TextEditingController();
-    final AppBar appBar = AppBar(
-      title: const Text("New Group"),
-    );
     final double height = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         appBar.preferredSize.height;
@@ -51,7 +50,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                         decoration: const InputDecoration(
                             labelText: "Enter the user Id"),
                         controller: controller,
-                        onChanged: (_) => setState(() {}),
+                        onChanged: (value) => setState(() {}),
                       ),
                     ),
                     Search(
@@ -70,7 +69,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
              */
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: usersProvider.tokenUsers != 0
+            floatingActionButton: usersProvider.tokenUsers.isNotEmpty
                 ? FloatingActionButton(
                     child: const Icon(Icons.arrow_forward),
                     onPressed: () {
@@ -162,7 +161,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                                                 "lastMessageAt": "",
                                               });
                                               setState(() {
-                                                loading = true;
+                                                loading = false;
                                               });
                                               Navigator.of(context).popUntil(
                                                   (route) => route.isFirst);

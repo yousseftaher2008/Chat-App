@@ -157,8 +157,8 @@ class GroupArrangement {
                                       isFriend,
                                       "user.png",
                                       isAdmin: admin,
-                                      isBlock: isBlock == true ? true : false,
-                                      isHeBlock: isBlock == "" ? true : false,
+                                      isBlock: isBlock[0],
+                                      isHeBlock: isBlock[1],
                                     ),
                                   );
                                 } else {
@@ -170,8 +170,8 @@ class GroupArrangement {
                                       "user.png",
                                       lastMessage: "",
                                       isAdmin: admin,
-                                      isBlock: isBlock == true ? true : false,
-                                      isHeBlock: isBlock == "" ? true : false,
+                                      isBlock: isBlock[0],
+                                      isHeBlock: isBlock[1],
                                     ),
                                     onLongPress: currentCreator
                                         ? () async {
@@ -251,8 +251,8 @@ class GroupArrangement {
                                         "user.png",
                                         lastMessage: "",
                                         isAdmin: admin,
-                                        isBlock: isBlock == true ? true : false,
-                                        isHeBlock: isBlock == "" ? true : false,
+                                        isBlock: isBlock[0],
+                                        isHeBlock: isBlock[1],
                                       ),
                                     );
                                   } else {
@@ -264,8 +264,8 @@ class GroupArrangement {
                                         "user.png",
                                         lastMessage: "",
                                         isAdmin: admin,
-                                        isBlock: isBlock == true ? true : false,
-                                        isHeBlock: isBlock == "" ? true : false,
+                                        isBlock: isBlock[0],
+                                        isHeBlock: isBlock[1],
                                       ),
                                       onLongPress: currentCreator
                                           ? () async {
@@ -336,8 +336,8 @@ class GroupArrangement {
                               user["image_url"],
                               false,
                               "user.png",
-                              isBlock: isBlock == true ? true : false,
-                              isHeBlock: isBlock == "" ? true : false,
+                              isBlock: isBlock[0],
+                              isHeBlock: isBlock[1],
                             ),
                           );
                         }

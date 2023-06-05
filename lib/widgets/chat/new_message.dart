@@ -69,12 +69,12 @@ class _NewMessageState extends State<NewMessage> {
         margin: const EdgeInsets.only(top: 8),
         padding: const EdgeInsets.all(8),
         child: _isLoading
-            ? SizedBox(
+            ? const SizedBox(
                 height: 150,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 10),
                     Text("Reload the photo...")

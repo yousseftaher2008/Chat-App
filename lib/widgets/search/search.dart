@@ -1,3 +1,4 @@
+// todo: correct the method of isHeBlocked
 import "package:chat_app/providers/users_providers.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
@@ -54,6 +55,59 @@ class _SearchState extends State<Search> {
                           }
                           if (isFriend.hasData) {
                             return GestureDetector(
+                              onLongPress: isFriend.data! != false
+                                  ? () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text(
+                                              "Do you want to block ${searchedUser["username"]}"),
+                                          actions: [
+                                            Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                  child: const Text(
+                                                    "NO",
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    await usersProvider
+                                                        .blockUser(
+                                                            searchedUser.id);
+                                                    setState(() {});
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                  child: const Text(
+                                                    "Yes",
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  : () {},
                               onTap: () async {
                                 if (widget.onlyFriends) {
                                   setState(() {
@@ -85,25 +139,28 @@ class _SearchState extends State<Search> {
                                             : isFriend.data,
                                       },
                                     );
+                                  } else {
+                                    // todo:showDialog
+                                    await usersProvider
+                                        .unBlock(searchedUser.id);
+                                    setState(() {});
                                   }
                                 }
                               },
-                              onLongPress: isBlock == true
-                                  ? () {
-                                      /* todo: unblock the user */
-                                    }
-                                  : () {},
                               child: isFriend.data == false
                                   ? ChatItem(
                                       searchedUser["username"],
                                       searchedUser["image_url"],
                                       false,
                                       "user.png",
-                                      isBlock: isBlock.data,
+                                      isBlock: isBlock.data![0],
+                                      isHeBlock: isBlock.data![1],
                                     )
                                   : StreamBuilder(
                                       stream: usersProvider.chat(isFriend.data),
                                       builder: (context, chat) {
+                                        if (chat.connectionState ==
+                                            ConnectionState.waiting) {}
                                         if (chat.hasData &&
                                             chat.connectionState !=
                                                 ConnectionState.waiting) {
@@ -115,18 +172,17 @@ class _SearchState extends State<Search> {
                                             lastMessage: widget.onlyFriends
                                                 ? ""
                                                 : chat.data!["lastMessage"],
-                                            isBlock: isBlock.data,
                                           );
                                         }
                                         return Container();
                                       }),
                             );
                           }
-                          return Container();
+                          return const Text("isFriend.hasData");
                         },
                       );
                     }
-                    return Container();
+                    return Text(isBlock.data.toString());
                   });
             },
             itemCount: searchedUsers.length,
@@ -137,10 +193,10 @@ class _SearchState extends State<Search> {
       stream: usersProvider.users,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 CircularProgressIndicator(),
                 Text("Loading..."),
               ],
