@@ -1,4 +1,3 @@
-// todo: correct the method of isHeBlocked
 import "package:chat_app/providers/users_providers.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
@@ -36,9 +35,11 @@ class _SearchState extends State<Search> {
                   builder: (context, isBlock) {
                     if (isBlock.connectionState == ConnectionState.waiting) {
                       return Center(
-                        child: Container(
-                            margin: const EdgeInsets.all(10),
-                            child: const CircularProgressIndicator()),
+                        child: index == 0
+                            ? Container(
+                                margin: const EdgeInsets.all(10),
+                                child: const CircularProgressIndicator())
+                            : Container(),
                       );
                     }
                     if (isBlock.hasData) {
@@ -48,9 +49,11 @@ class _SearchState extends State<Search> {
                           if (isFriend.connectionState ==
                               ConnectionState.waiting) {
                             return Center(
-                              child: Container(
-                                  margin: const EdgeInsets.all(10),
-                                  child: const CircularProgressIndicator()),
+                              child: index == 0
+                                  ? Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: const CircularProgressIndicator())
+                                  : Container(),
                             );
                           }
                           if (isFriend.hasData) {
@@ -224,7 +227,7 @@ class _SearchState extends State<Search> {
                                       }),
                             );
                           }
-                          return const Text("isFriend.hasData");
+                          return Container();
                         },
                       );
                     }
@@ -244,7 +247,6 @@ class _SearchState extends State<Search> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
-                Text("Loading..."),
               ],
             ),
           );
@@ -283,6 +285,7 @@ class _SearchState extends State<Search> {
                 : null;
           }
           if (searchedUsers.isNotEmpty || tokenUsers.isNotEmpty) {
+            // add
             List<Widget> widgets = [];
             if (tokenUsers.isNotEmpty) {
               for (final tokenUser in tokenUsers) {
@@ -296,6 +299,9 @@ class _SearchState extends State<Search> {
                           radius: 15,
                           backgroundImage: NetworkImage(tokenUser["image_url"]),
                           backgroundColor: Colors.transparent,
+                        ),
+                        const SizedBox(
+                          width: 10,
                         ),
                         Text(
                           tokenUser["username"],
@@ -339,10 +345,20 @@ class _SearchState extends State<Search> {
                     ),
                   );
           }
-          return Center(
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              child: const Text("There is no user with this id"),
+          return Expanded(
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                child: Text(
+                  widget.onlyFriends
+                      ? widget.searchedId == ""
+                          ? "You don't have friends"
+                          : "You haven't friends with this Id"
+                      : "There is no user with this id",
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           );
         }

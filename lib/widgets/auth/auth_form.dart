@@ -26,6 +26,7 @@ class _AuthFormState extends State<AuthForm> {
   String _email = "";
   String _userName = "";
   String _password = "";
+  String _password2 = "";
 
   void onSelectImage(File image) {
     _pickedImage = image;
@@ -38,6 +39,13 @@ class _AuthFormState extends State<AuthForm> {
     if (_pickedImage == null && !_isLogin) {
       _pickedImage = File("unknown");
     }
+    if (_password != _password2) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("The password must be equal to password again"),
+      ));
+      return;
+    }
+    print("$_password $_password2");
     _form.currentState!.save();
     if (widget.scaffoldKey.currentContext != null) {
       FocusScope.of(widget.scaffoldKey.currentContext!).unfocus();
@@ -77,8 +85,9 @@ class _AuthFormState extends State<AuthForm> {
                       textCapitalization: TextCapitalization.none,
                       enableSuggestions: false,
                       keyboardType: TextInputType.emailAddress,
-                      decoration:
-                          const InputDecoration(labelText: "Email Address"),
+                      decoration: const InputDecoration(
+                          labelText: "Email Address",
+                          labelStyle: TextStyle(fontWeight: FontWeight.bold)),
                       validator: (value) => value == "" || value == null
                           ? "Please enter an email address"
                           : !(value.contains("@") && value.contains(".com"))
@@ -95,14 +104,16 @@ class _AuthFormState extends State<AuthForm> {
                         autocorrect: true,
                         textCapitalization: TextCapitalization.words,
                         enableSuggestions: true,
-                        decoration:
-                            const InputDecoration(labelText: "UserName"),
+                        decoration: const InputDecoration(
+                          labelText: "UserName",
+                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         validator: (value) => value == "" || value == null
                             ? "Please enter a user name"
                             : value.length < 5
                                 ? "Username cannot be less than 5 characters"
-                                : value.length > 12
-                                    ? "Username cannot be longer than 12 characters"
+                                : value.length > 25
+                                    ? "Username cannot be longer than 25 characters"
                                     : null,
                         onSaved: (newValue) {
                           if (newValue == null) return;
@@ -111,7 +122,10 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                     TextFormField(
                       key: const ValueKey("password"),
-                      decoration: const InputDecoration(labelText: "Password"),
+                      decoration: const InputDecoration(
+                        labelText: "Password",
+                        labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       obscureText: true,
                       validator: (value) => value == "" || value == null
                           ? "Please enter a password"
@@ -123,6 +137,24 @@ class _AuthFormState extends State<AuthForm> {
                         _password = newValue;
                       },
                     ),
+                    if (!_isLogin)
+                      TextFormField(
+                        key: const ValueKey("password2"),
+                        decoration: const InputDecoration(
+                          labelText: "Password Again",
+                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        obscureText: true,
+                        validator: (value) => value == "" || value == null
+                            ? "Please enter a password agin"
+                            : value.length < 8
+                                ? "The user password must be at least 8 characters"
+                                : null,
+                        onSaved: (newValue) {
+                          if (newValue == null) return;
+                          _password2 = newValue;
+                        },
+                      ),
                     const SizedBox(height: 12),
                     if (_isLoading)
                       const Center(

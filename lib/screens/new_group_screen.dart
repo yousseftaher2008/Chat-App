@@ -20,11 +20,21 @@ class NewGroupScreen extends StatefulWidget {
 
 class _NewGroupScreenState extends State<NewGroupScreen> {
   final controller = TextEditingController();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
+
   File? storedImage;
   String? groupName;
   final AppBar appBar = AppBar(
     title: const Text("New Group"),
   );
+
+  @override
+  void dispose() {
+    _form.currentState != null ? _form.currentState!.dispose() : null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
@@ -38,6 +48,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
             Navigator.of(context).pushReplacementNamed(ChatsScreen.routeName);
           }
           return Scaffold(
+            key: _scaffold,
             appBar: appBar,
             body: SingleChildScrollView(
               child: SizedBox(
@@ -93,79 +104,104 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                                           assetImage: "group.jpg",
                                         ),
                                         Expanded(
-                                            child: TextField(
-                                          decoration: const InputDecoration(
-                                              labelText: "GroupName"),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              groupName = value;
-                                            });
-                                          },
+                                            child: Form(
+                                          key: _form,
+                                          child: TextFormField(
+                                            decoration: const InputDecoration(
+                                                labelText: "GroupName"),
+                                            validator: (value) => value ==
+                                                        null ||
+                                                    value == ""
+                                                ? "Please enter the group name"
+                                                : value.length < 4
+                                                    ? "The group name should be more than 4 characters"
+                                                    : null,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                groupName = value;
+                                              });
+                                            },
+                                          ),
                                         )),
                                       ],
                                     ),
+                                    if (!loading)
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          if (_form.currentState == null ||
+                                              !_form.currentState!.validate() ||
+                                              loading) {
+                                            return;
+                                          }
+                                          _form.currentState!.save();
+                                          setState(() {
+                                            loading = true;
+                                          });
+                                          if (groupName != null) {
+                                            final String currentUser =
+                                                usersProvider.userId;
+                                            late final url;
+                                            late final ref;
+                                            final String chatId =
+                                                usersProvider.generateChatId();
+                                            if (storedImage == null) {
+                                              ref = FirebaseStorage.instance
+                                                  .ref()
+                                                  .child("users_images")
+                                                  .child("group.jpg");
+                                              url = await ref.getDownloadURL();
+                                            } else {
+                                              url =
+                                                  await usersProvider.sendFile(
+                                                      storedImage!, chatId);
+                                              ref = FirebaseStorage.instance
+                                                  .ref()
+                                                  .child("users_images")
+                                                  .child(chatId);
+                                            }
+
+                                            await usersProvider
+                                                .createGroup(chatId, {
+                                              "groupName": groupName,
+                                              "groupImage": url,
+                                              "creator": currentUser,
+                                              "type": "group",
+                                              "members": [
+                                                currentUser,
+                                                ...usersProvider.tokenUsers,
+                                              ],
+                                              "admins": [
+                                                currentUser,
+                                              ],
+                                              "lastMessage": "",
+                                              "lastMessageAt": "",
+                                            });
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                            Navigator.of(_scaffold
+                                                            .currentContext !=
+                                                        null
+                                                    ? _scaffold.currentContext!
+                                                    : context)
+                                                .popUntil(
+                                                    (route) => route.isFirst);
+                                            await Navigator.of(_scaffold
+                                                            .currentContext !=
+                                                        null
+                                                    ? _scaffold.currentContext!
+                                                    : context)
+                                                .pushReplacementNamed(
+                                              ChatsScreen.routeName,
+                                            );
+                                          }
+                                        },
+                                        child: const Text("Create Group"),
+                                      ),
                                     if (loading)
                                       const Center(
                                         child: CircularProgressIndicator(),
                                       ),
-                                    if (!loading)
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            setState(() {
-                                              loading = true;
-                                            });
-                                            if (groupName != null) {
-                                              final String currentUser =
-                                                  usersProvider.userId;
-                                              late final url;
-                                              late final ref;
-                                              final String chatId =
-                                                  usersProvider
-                                                      .generateChatId();
-                                              if (storedImage == null) {
-                                                ref = FirebaseStorage.instance
-                                                    .ref()
-                                                    .child("users_images")
-                                                    .child("group.jpg");
-                                                url =
-                                                    await ref.getDownloadURL();
-                                              } else {
-                                                url = await usersProvider
-                                                    .sendFile(
-                                                        storedImage!, chatId);
-                                                ref = FirebaseStorage.instance
-                                                    .ref()
-                                                    .child("users_images")
-                                                    .child(chatId);
-                                              }
-
-                                              await usersProvider
-                                                  .createGroup(chatId, {
-                                                "groupName": groupName,
-                                                "groupImage": url,
-                                                "creator": currentUser,
-                                                "type": "group",
-                                                "members": [
-                                                  currentUser,
-                                                  ...usersProvider.tokenUsers,
-                                                ],
-                                                "admins": [
-                                                  currentUser,
-                                                ],
-                                                "lastMessage": "",
-                                                "lastMessageAt": "",
-                                              });
-                                              setState(() {
-                                                loading = false;
-                                              });
-                                              Navigator.of(context).popUntil(
-                                                  (route) => route.isFirst);
-                                              await Navigator.of(context)
-                                                  .pushReplacementNamed(
-                                                      ChatsScreen.routeName);
-                                            }
-                                          },
-                                          child: const Text("Create Group"))
                                   ],
                                 ),
                               ),

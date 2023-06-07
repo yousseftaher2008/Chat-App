@@ -1,14 +1,12 @@
-/*
-todo: 
-  make a delete all messages function in actions
-  block user action in actions
-*/
-
+import "package:chat_app/providers/users_providers.dart";
 import "package:chat_app/screens/group_screen.dart";
+import "package:provider/provider.dart";
 import "../screens/profile_screen.dart";
 import "../widgets/chat/messages.dart";
 import "../widgets/chat/new_message.dart";
 import "package:flutter/material.dart";
+
+import "chats_screen.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -30,6 +28,8 @@ class _ChatScreenState extends State<ChatScreen> {
       userId = args["userId"];
       status = args["status"];
     }
+    final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
+
     final AppBar appBar = AppBar(
       title: type == "group"
           ? GestureDetector(
@@ -52,67 +52,86 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                if (type == "private")
-                  Text(
-                    status!,
-                    style: TextStyle(
-                      color: status == "online"
-                          ? Colors.green
-                          : const Color.fromRGBO(50, 0, 0, 1),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                    ),
+                Text(
+                  status!,
+                  style: TextStyle(
+                    color: status == "online"
+                        ? Colors.green
+                        : const Color.fromRGBO(50, 0, 0, 1),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                   ),
+                ),
               ],
             ),
       actions: [
         DropdownButton(
           underline: Container(),
-          items: const [
-            DropdownMenuItem(
-              value: "group",
-              child: Row(children: [
-                Icon(
-                  Icons.group_add,
-                  color: Colors.black,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text("New Group"),
-              ]),
-            ),
+          items: [
             DropdownMenuItem(
               value: "profile",
               child: Row(children: [
-                Icon(
-                  Icons.manage_accounts,
+                const Icon(
+                  Icons.person,
                   color: Colors.black,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
-                Text("My Profile"),
+                Text(
+                  type == "private" ? "User Profile" : "Group info",
+                  style: const TextStyle(),
+                ),
               ]),
             ),
             DropdownMenuItem(
-              value: "logout",
+              value: type == "private" ? "block" : "exit",
               child: Row(children: [
                 Icon(
-                  Icons.exit_to_app,
+                  type == "private"
+                      ? Icons.person_off_rounded
+                      : Icons.exit_to_app,
                   color: Colors.black,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Text(type == "private" ? "Block user" : "Exit group"),
+              ]),
+            ),
+            const DropdownMenuItem(
+              value: "delete",
+              child: Row(children: [
+                Icon(
+                  Icons.delete,
+                  color: Colors.red,
                 ),
                 SizedBox(
                   width: 8,
                 ),
-                Text("logout"),
+                Text(
+                  "Clear Messages",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
               ]),
             ),
           ],
           onChanged: (itemIdentifier) async {
-            if (itemIdentifier == "logout") {
+            if (itemIdentifier == "delete") {
+              await usersProvider.clearMessages(chatId);
+            } else if (itemIdentifier == "block") {
+              await usersProvider.blockUser(userId!);
+              await Navigator.of(context)
+                  .pushReplacementNamed(ChatsScreen.routeName);
             } else if (itemIdentifier == "profile") {
-            } else if (itemIdentifier == "group") {}
+              await Navigator.of(context).pushNamed(
+                  type == "private"
+                      ? ProfileScreen.routeName
+                      : GroupScreen.routeName,
+                  arguments: type == "private" ? userId! : chatId);
+            }
           },
           icon: Icon(
             Icons.more_vert,

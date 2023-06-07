@@ -11,7 +11,7 @@ import "package:image_picker/image_picker.dart";
 class UsersProvider with ChangeNotifier {
   String _userId = "";
   int count = 0;
-  List<String> _tokenUsers = [];
+  List _tokenUsers = [];
   String get userId => _userId;
 
   Future<dynamic> isFriend(String id) async {
@@ -163,7 +163,7 @@ class UsersProvider with ChangeNotifier {
   Future<DocumentReference<Map<String, dynamic>>> addChat(String id) async =>
       FirebaseFirestore.instance.collection("/chats").add({
         "lastMessage": "",
-        "lastMessageAt": "",
+        "lastMessageAt": Timestamp.fromDate(DateTime(2022)),
         "type": "private",
         "userId1": userId,
         "userId2": id,
@@ -205,7 +205,8 @@ class UsersProvider with ChangeNotifier {
     });
   }
 
-  Future<void> deleteMessage(String messageId, String chatId) async {
+  Future<void> deleteMessage(
+      String messageId, String chatId, bool isPhoto) async {
     final messages = await FirebaseFirestore.instance
         .collection("/chats")
         .doc(chatId)
@@ -224,6 +225,13 @@ class UsersProvider with ChangeNotifier {
             ? Timestamp.fromDate(DateTime(2022))
             : lastMessages[1]["createdAt"],
       });
+    }
+    if (isPhoto) {
+      final Reference ref = FirebaseStorage.instance
+          .ref()
+          .child("users_images")
+          .child("$messageId.jpg");
+      await ref.delete();
     }
     await FirebaseFirestore.instance
         .collection("/chats")
@@ -375,13 +383,12 @@ class UsersProvider with ChangeNotifier {
     return url;
   }
 
-  List<String> get tokenUsers {
+  List get tokenUsers {
     return _tokenUsers;
   }
 
-  void updateTokenUsers(List<String> newTokenUsers) {
+  void updateTokenUsers(List newTokenUsers) {
     _tokenUsers = newTokenUsers;
-
     notifyListeners();
   }
 
@@ -466,6 +473,21 @@ class UsersProvider with ChangeNotifier {
     userBlocks.remove(id);
     await FirebaseFirestore.instance.collection("/users").doc(_userId).update({
       "blocks": userBlocks,
+    });
+  }
+
+  Future<void> clearMessages(String chatId) async {
+    final chatData = FirebaseFirestore.instance
+        .collection("/chats")
+        .doc(chatId)
+        .collection("chat");
+    final chat = await chatData.get();
+    for (final message in chat.docs) {
+      await chatData.doc(message.id).delete();
+    }
+    await FirebaseFirestore.instance.collection("/chats").doc(chatId).update({
+      "lastMessage": "",
+      "lastMessageAt": Timestamp.fromDate(DateTime(2022)),
     });
   }
 }

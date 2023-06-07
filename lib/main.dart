@@ -55,20 +55,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           title: "Chat App",
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.pink),
-                shape: MaterialStatePropertyAll(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
                 ),
               ),
-            ),
-            colorScheme:
-                ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-                    .copyWith(secondary: Colors.deepPurple)
-                    .copyWith(background: Colors.deepPurple),
-          ),
+              colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)),
           home: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (_, snapshot) {

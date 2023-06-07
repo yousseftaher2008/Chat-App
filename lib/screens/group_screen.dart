@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_app/providers/users_providers.dart';
 import 'package:chat_app/widgets/group/group_arrangement.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
+  bool problem = false;
   @override
   Widget build(BuildContext context) {
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
@@ -105,197 +108,203 @@ class _GroupScreenState extends State<GroupScreen> {
       );
     }
 
-    return StreamBuilder(
-        stream: usersProvider.chat(groupId),
-        builder: (ctx, chatData) {
-          if (chatData.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          if (chatData.hasData) {
-            final doc = chatData.data!;
-            final String currentUser = usersProvider.userId;
-            final bool creator = doc["creator"] == currentUser;
-            bool currentIsAdmin = false;
-            final List admins = doc["admins"];
-            for (var i = 0; i < admins.length; i++) {
-              if (currentUser == admins[i]) {
-                currentIsAdmin = true;
+    return problem
+        ? const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : StreamBuilder(
+            stream: usersProvider.chat(groupId),
+            builder: (ctx, chatData) {
+              if (chatData.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
               }
-            }
+              if (chatData.hasData) {
+                final doc = chatData.data!;
+                final String currentUser = usersProvider.userId;
+                final bool creator = doc["creator"] == currentUser;
+                bool currentIsAdmin = false;
+                final List admins = doc["admins"];
+                for (var i = 0; i < admins.length; i++) {
+                  if (currentUser == admins[i]) {
+                    currentIsAdmin = true;
+                  }
+                }
 
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("Group"),
-              ),
-              body: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // show the group Image
-                    Container(
-                      height: 150,
-                      width: 150,
-                      margin: const EdgeInsets.all(15),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(75),
-                        child: FadeInImage(
-                          placeholder: const AssetImage('assets/group.jpg'),
-                          image: NetworkImage(doc["groupImage"]),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    //show the group name
-                    Text(
-                      doc["groupName"],
-                      style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    //show the group members
-                    Container(
-                      margin: const EdgeInsets.all(15),
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Members",
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: currentIsAdmin
-                                    ? TextAlign.end
-                                    : TextAlign.center,
-                              ),
+                return Scaffold(
+                  appBar: AppBar(
+                    title: const Text("Group"),
+                  ),
+                  body: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // show the group Image
+                        Container(
+                          height: 150,
+                          width: 150,
+                          margin: const EdgeInsets.all(15),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(75),
+                            child: FadeInImage(
+                              placeholder: const AssetImage('assets/group.jpg'),
+                              image: NetworkImage(doc["groupImage"]),
+                              fit: BoxFit.cover,
                             ),
-                            if (currentIsAdmin)
-                              Expanded(
-                                flex: 1,
-                                child: IconButton(
-                                  alignment: Alignment.topRight,
-                                  onPressed: () async {
-                                    await _showDialog(ctx, doc["members"]);
-                                  },
-                                  icon: const Icon(
-                                    Icons.person_add_alt_1,
-                                    color: Colors.green,
-                                    size: 30,
+                          ),
+                        ),
+                        //show the group name
+                        Text(
+                          doc["groupName"],
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        //show the group members
+                        Container(
+                          margin: const EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    "Members",
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: currentIsAdmin
+                                        ? TextAlign.end
+                                        : TextAlign.center,
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                        Builder(
-                          builder: (context) {
-                            bool isAdmin(String id) {
-                              bool isAdmin = false;
-                              for (final admin in doc["admins"]) {
-                                if (admin == id) {
-                                  isAdmin = true;
-                                }
-                              }
-                              return isAdmin;
-                            }
-
-                            final List<Widget> widgets =
-                                GroupArrangement.arrange(
-                              context,
-                              groupId,
-                              doc["members"],
-                              isAdmin,
-                              creator,
-                            );
-                            return Column(
-                              children: widgets,
-                            );
-                          },
-                        ),
-                      ]),
-                    ),
-                    // show the exit  group button
-
-                    GestureDetector(
-                      onTap: () async {
-                        if (doc["admins"].length == 1 && currentIsAdmin) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  "You are the only admin it the group, Please add an admin."),
-                              backgroundColor: Colors.redAccent,
-                            ),
-                          );
-                        } else {
-                          await usersProvider.removeMember(
-                            currentUser,
-                            groupId,
-                          );
-
-                          Navigator.of(context)
-                              .popUntil((route) => route.isFirst);
-                          await Navigator.of(context)
-                              .pushReplacementNamed(ChatsScreen.routeName);
-                        }
-                      },
-                      child: const ListTile(
-                        leading: Icon(Icons.exit_to_app, color: Colors.red),
-                        title: Text("Exit Group",
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    ),
-                    if (creator)
-                      const Divider(
-                        color: Colors.black,
-                      ),
-                    if (creator)
-                      GestureDetector(
-                        onTap: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text("Are You Sure?"),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    Navigator.of(context)
-                                        .popUntil((route) => route.isFirst);
-                                    await Navigator.of(context)
-                                        .pushReplacementNamed(
-                                            ChatsScreen.routeName);
-                                    await usersProvider.deleteChat(groupId);
-                                  },
-                                  child: const Text("Sure"),
-                                )
+                                if (currentIsAdmin)
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                      alignment: Alignment.topRight,
+                                      onPressed: () async {
+                                        await _showDialog(ctx, doc["members"]);
+                                      },
+                                      icon: const Icon(
+                                        Icons.person_add_alt_1,
+                                        color: Colors.green,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
-                          );
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.delete, color: Colors.red),
-                          title: Text("Delete Group",
-                              style: TextStyle(color: Colors.red)),
+                            Builder(
+                              builder: (context) {
+                                bool isAdmin(String id) {
+                                  bool isAdmin = false;
+                                  for (final admin in doc["admins"]) {
+                                    if (admin == id) {
+                                      isAdmin = true;
+                                    }
+                                  }
+                                  return isAdmin;
+                                }
+
+                                final List<Widget> widgets =
+                                    GroupArrangement.arrange(
+                                  context,
+                                  groupId,
+                                  doc["members"],
+                                  isAdmin,
+                                  creator,
+                                );
+                                return Column(
+                                  children: widgets,
+                                );
+                              },
+                            ),
+                          ]),
                         ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          }
-          //return container if the chat is downloading
-          return Container();
-        });
+                        // show the exit  group button
+
+                        GestureDetector(
+                          onTap: () async {
+                            if (doc["admins"].length == 1 && currentIsAdmin) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      "You are the only admin it the group, Please add an admin."),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            } else {
+                              await usersProvider.removeMember(
+                                currentUser,
+                                groupId,
+                              );
+
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
+                              await Navigator.of(context)
+                                  .pushReplacementNamed(ChatsScreen.routeName);
+                            }
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.exit_to_app, color: Colors.red),
+                            title: Text("Exit Group",
+                                style: TextStyle(color: Colors.red)),
+                          ),
+                        ),
+                        if (creator) const Divider(),
+                        if (creator)
+                          GestureDetector(
+                            onTap: () async {
+                              await showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text("Are You Sure?"),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        Navigator.of(context)
+                                            .popUntil((route) => route.isFirst);
+                                        unawaited(
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  ChatsScreen.routeName),
+                                        );
+                                        problem = true;
+                                        await usersProvider.deleteChat(groupId);
+                                      },
+                                      child: const Text("Sure"),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                            child: const ListTile(
+                              leading: Icon(Icons.delete, color: Colors.red),
+                              title: Text("Delete Group",
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              //return container if the chat is downloading
+              return Container();
+            });
   }
 }

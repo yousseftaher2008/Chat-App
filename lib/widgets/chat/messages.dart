@@ -41,9 +41,13 @@ class Messages extends StatelessWidget {
                           if (isGroup.hasData &&
                               isGroup.connectionState !=
                                   ConnectionState.waiting) {
+                            final bool isPhoto = doc[i]["type"] == "photo";
                             Future<void> deleteMessage() async {
                               await usersProvider.deleteMessage(
-                                  doc[i].id, chatId);
+                                doc[i].id,
+                                chatId,
+                                isPhoto,
+                              );
                             }
 
                             return StreamBuilder(
@@ -56,7 +60,7 @@ class Messages extends StatelessWidget {
                                       doc[i]["${doc[i]["type"]}"],
                                       doc[i]["userId"],
                                       user.data!["username"],
-                                      doc[i]["type"] == "photo",
+                                      isPhoto,
                                       isGroup.data!,
                                       i == (doc.length - 1)
                                           ? false

@@ -1,5 +1,6 @@
 import "package:chat_app/providers/users_providers.dart";
 import "package:chat_app/screens/profile_screen.dart";
+import "package:chat_app/screens/show_image_screen.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
@@ -70,56 +71,71 @@ class MessageItem extends StatelessWidget {
 
         //the user message
         GestureDetector(
-          onLongPress: () {
-            showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                      content: SizedBox(
-                        height: 150,
-                        child: Center(
-                            child: TextButton.icon(
-                          label: const Text(
-                            "Delete Message",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            deleteMessage();
-                            Navigator.of(ctx).pop();
-                          },
-                        )),
-                      ),
-                    ));
-          },
+          onLongPress: isMe
+              ? () {
+                  showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Center(
+                                    child: TextButton.icon(
+                                  label: const Text(
+                                    "Delete Message",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    deleteMessage();
+                                    Navigator.of(ctx).pop();
+                                  },
+                                )),
+                              ],
+                            ),
+                          ));
+                }
+              : null,
+          onTap: isPhoto
+              ? () {
+                  Navigator.of(context).pushNamed(ShowImageScreen.routeName,
+                      arguments: {
+                        "image": message,
+                        "title": "send by ${isMe ? "You" : userName}"
+                      });
+                }
+              : null,
           child: Container(
             //style for the message
             decoration: BoxDecoration(
-              borderRadius: !isPhoto
-                  ? BorderRadius.only(
-                      topRight: (isPreviousSame || !isMe)
-                          ? const Radius.circular(12)
-                          : const Radius.circular(0),
-                      topLeft: (!isPreviousSame && !isMe)
-                          ? const Radius.circular(0)
-                          : const Radius.circular(12),
-                      bottomRight: const Radius.circular(12),
-                      bottomLeft: const Radius.circular(12),
-                    )
-                  : null,
+              borderRadius: BorderRadius.only(
+                topRight: (isPreviousSame || !isMe)
+                    ? const Radius.circular(12)
+                    : const Radius.circular(0),
+                topLeft: (!isPreviousSame && !isMe)
+                    ? const Radius.circular(0)
+                    : const Radius.circular(12),
+                bottomRight: const Radius.circular(12),
+                bottomLeft: const Radius.circular(12),
+              ),
               color: isPhoto
                   ? Colors.transparent
                   : isMe
-                      ? Theme.of(context).colorScheme.secondary
+                      ? Theme.of(context).colorScheme.primary
                       : Colors.grey[350],
             ),
             padding: isPhoto
                 ? const EdgeInsets.all(0)
                 : const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             margin: EdgeInsets.only(
-                top: !isPreviousSame ? 50 : 5, bottom: 5, left: 10, right: 10),
+              top: !isPreviousSame ? 50 : 5,
+              bottom: 5,
+              left: 10,
+              right: 10,
+            ),
             //make a max width
             constraints: const BoxConstraints(maxWidth: 140),
             // the alignment of the message
@@ -147,13 +163,14 @@ class MessageItem extends StatelessWidget {
                     ? SizedBox(
                         child: ClipRRect(
                           borderRadius: BorderRadius.only(
-                            topRight: const Radius.circular(12),
-                            bottomLeft: isMe
+                            topRight: (isPreviousSame || !isMe)
                                 ? const Radius.circular(12)
                                 : const Radius.circular(0),
-                            bottomRight: isMe
+                            topLeft: (!isPreviousSame && !isMe)
                                 ? const Radius.circular(0)
                                 : const Radius.circular(12),
+                            bottomRight: const Radius.circular(12),
+                            bottomLeft: const Radius.circular(12),
                           ),
                           child: FadeInImage(
                             placeholder:
