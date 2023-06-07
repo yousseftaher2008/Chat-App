@@ -90,9 +90,12 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        body: AuthForm(_submit, _scaffoldKey),
-      );
+  Widget build(BuildContext context) {
+    final double mediaQuery = MediaQuery.of(context).size.height;
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      key: _scaffoldKey,
+      body: AuthForm(_submit, _scaffoldKey, mediaQuery),
+    );
+  }
 }

@@ -60,8 +60,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   backgroundColor: MaterialStateProperty.all(Colors.blue),
                   shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(50)),
                   ),
+                  minimumSize: MaterialStateProperty.all(Size(100, 50)),
                 ),
               ),
               colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)),
