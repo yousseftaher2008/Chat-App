@@ -7,18 +7,21 @@ class ShowImageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map userData = ModalRoute.of(context)!.settings.arguments as Map;
     final String image = userData["image"] as String;
-    final String title = userData["title"] as String;
+    final String id = userData["id"] as String;
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        backgroundColor: Colors.transparent,
       ),
-      body: Center(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Image.network(
-            image,
-            fit: BoxFit.cover,
+      backgroundColor: Colors.white12,
+      body: Hero(
+        tag: id,
+        child: Center(
+          child: Container(
+            width: double.infinity,
+            child: Image.network(
+              image,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

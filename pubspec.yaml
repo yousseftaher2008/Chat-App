@@ -31,6 +31,7 @@ environment:
 dependencies:
   cloud_firestore: ^4.8.0
   connectivity_plus: ^4.0.1
+  country_picker: ^2.0.20
   cupertino_icons: ^1.0.5
   firebase_auth: ^4.6.2
   firebase_core: ^2.11.0
@@ -40,8 +41,11 @@ dependencies:
   flutter_custom_clippers: ^2.1.0
   image_picker: ^0.8.7+5
   introduction_screen: ^3.1.8
+  libphonenumber: ^2.0.2
   lint: ^1.0.0
+  pinput: ^2.2.31
   provider: ^6.0.5
+  searchbar_animation: ^0.0.4
   shared_preferences: ^2.1.1
 
 dev_dependencies:

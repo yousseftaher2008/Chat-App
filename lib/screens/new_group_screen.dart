@@ -6,6 +6,7 @@ import "package:chat_app/widgets/search/search.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:searchbar_animation/searchbar_animation.dart";
 import "/screens/chats_screen.dart";
 import "package:connectivity_plus/connectivity_plus.dart";
 
@@ -55,14 +56,24 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 height: height,
                 child: Column(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      child: TextField(
-                        decoration: const InputDecoration(
-                            labelText: "Enter the user Id"),
-                        controller: controller,
-                        onChanged: (value) => setState(() {}),
-                      ),
+                    SearchBarAnimation(
+                      textEditingController: controller,
+                      cursorColour: Colors.blue,
+                      isOriginalAnimation: true,
+                      buttonBorderColour: Colors.black45,
+                      secondaryButtonWidget:
+                          const Icon(Icons.arrow_back_ios_rounded),
+                      buttonWidget: const Icon(Icons.search),
+                      trailingWidget: GestureDetector(
+                          child: const Icon(Icons.clear),
+                          onTap: controller.text != ''
+                              ? () {
+                                  FocusScope.of(context).unfocus();
+                                  controller.text = '';
+                                }
+                              : null),
+                      hintText: "User Id",
+                      onChanged: (_) => setState(() {}),
                     ),
                     Search(
                       controller.text,

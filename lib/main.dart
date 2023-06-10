@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50)),
                   ),
-                  minimumSize: MaterialStateProperty.all(Size(100, 50)),
+                  minimumSize: MaterialStateProperty.all(const Size(100, 50)),
                 ),
               ),
               colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)),
@@ -78,8 +78,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return isViewed == true
                       ? snapshot.hasData
                           ? const ChatsScreen()
-                          : const AuthScreen()
-                      : OnboardingScreen(snapshot.hasData);
+                          : AuthScreen()
+                      : OnboardingScreen();
               }
             },
           ),
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ChatScreen.routeName: (context) => const ChatScreen(),
             SearchScreen.routeName: (context) => const SearchScreen(),
             ChatsScreen.routeName: (context) => const ChatsScreen(),
-            AuthScreen.routeName: (context) => const AuthScreen(),
+            AuthScreen.routeName: (context) => AuthScreen(),
             ShowImageScreen.routeName: (context) => const ShowImageScreen(),
             GroupScreen.routeName: (context) => const GroupScreen(),
             NewGroupScreen.routeName: (context) => const NewGroupScreen(),

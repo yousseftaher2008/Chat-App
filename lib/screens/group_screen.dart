@@ -244,7 +244,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 const SnackBar(
                                   content: Text(
                                       "You are the only admin it the group, Please add an admin."),
-                                  backgroundColor: Colors.redAccent,
+                                  backgroundColor: Colors.red,
                                 ),
                               );
                             } else {

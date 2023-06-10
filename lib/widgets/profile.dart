@@ -79,12 +79,12 @@ class Profile extends StatelessWidget {
                                 ShowImageScreen.routeName,
                                 arguments: {
                                   "image": userImage.data,
-                                  "title": username,
+                                  "id": userId,
                                 },
                               );
                             },
                             child: Hero(
-                              tag: userImage.data!,
+                              tag: userId,
                               child: SizedBox(
                                 height: 150,
                                 width: 150,

@@ -196,13 +196,21 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
                                     }
                                   }
                                   if (isIn) {
-                                    return chat_item(
-                                      isGroup,
-                                      chatName,
-                                      chatImage,
-                                      lastMessage,
-                                      doc[i].id,
-                                      doc[i]["type"],
+                                    return Column(
+                                      children: [
+                                        if (i == doc.length - 1)
+                                          const Divider(
+                                            color: Colors.black54,
+                                          ),
+                                        chat_item(
+                                          isGroup,
+                                          chatName,
+                                          chatImage,
+                                          lastMessage,
+                                          doc[i].id,
+                                          doc[i]["type"],
+                                        ),
+                                      ],
                                     );
                                   }
                                   return Container();
@@ -232,15 +240,23 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
                                   }
                                 }
 
-                                return chat_item(
-                                  isGroup,
-                                  chatName,
-                                  chatImage,
-                                  lastMessage,
-                                  doc[i].id,
-                                  doc[i]["type"],
-                                  userStatus,
-                                  userId2,
+                                return Column(
+                                  children: [
+                                    if (i == doc.length - 1)
+                                      const Divider(
+                                        color: Colors.black54,
+                                      ),
+                                    chat_item(
+                                      isGroup,
+                                      chatName,
+                                      chatImage,
+                                      lastMessage,
+                                      doc[i].id,
+                                      doc[i]["type"],
+                                      userStatus,
+                                      userId2,
+                                    ),
+                                  ],
                                 );
                               });
                         }

@@ -196,35 +196,44 @@ class _SearchState extends State<Search> {
                                   }
                                 }
                               },
-                              child: isFriend.data == false
-                                  ? ChatItem(
+                              child: Column(
+                                children: [
+                                  if (index != 0)
+                                    const Divider(
+                                        color: Colors.black54, height: 3),
+                                  if (isFriend.data == false)
+                                    ChatItem(
                                       searchedUser["username"],
                                       searchedUser["image_url"],
                                       false,
                                       "user.png",
                                       isBlock: isBlock.data![0],
                                       isHeBlock: isBlock.data![1],
-                                    )
-                                  : StreamBuilder(
-                                      stream: usersProvider.chat(isFriend.data),
-                                      builder: (context, chat) {
-                                        if (chat.connectionState ==
-                                            ConnectionState.waiting) {}
-                                        if (chat.hasData &&
-                                            chat.connectionState !=
-                                                ConnectionState.waiting) {
-                                          return ChatItem(
-                                            searchedUser["username"],
-                                            searchedUser["image_url"],
-                                            true,
-                                            "user.png",
-                                            lastMessage: widget.onlyFriends
-                                                ? ""
-                                                : chat.data!["lastMessage"],
-                                          );
-                                        }
-                                        return Container();
-                                      }),
+                                    ),
+                                  if (isFriend.data != false)
+                                    StreamBuilder(
+                                        stream:
+                                            usersProvider.chat(isFriend.data),
+                                        builder: (context, chat) {
+                                          if (chat.connectionState ==
+                                              ConnectionState.waiting) {}
+                                          if (chat.hasData &&
+                                              chat.connectionState !=
+                                                  ConnectionState.waiting) {
+                                            return ChatItem(
+                                              searchedUser["username"],
+                                              searchedUser["image_url"],
+                                              true,
+                                              "user.png",
+                                              lastMessage: widget.onlyFriends
+                                                  ? ""
+                                                  : chat.data!["lastMessage"],
+                                            );
+                                          }
+                                          return Container();
+                                        }),
+                                ],
+                              ),
                             );
                           }
                           return Container();
@@ -278,6 +287,7 @@ class _SearchState extends State<Search> {
                   return found;
                 })
               : snapshot.data!.docs;
+
           final searchedUsers = [];
           for (final user in users) {
             user.id.startsWith(widget.searchedId) && user.id != currentUserId
@@ -291,7 +301,8 @@ class _SearchState extends State<Search> {
               for (final tokenUser in tokenUsers) {
                 widgets.add(
                   Container(
-                    margin: const EdgeInsets.all(3),
+                    margin: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -305,17 +316,19 @@ class _SearchState extends State<Search> {
                         ),
                         Text(
                           tokenUser["username"],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.blue),
                         ),
                         IconButton(
-                            onPressed: () {
-                              setState(() {
-                                tokenUsers.remove(tokenUser);
-                                tokenUsersIds.remove(tokenUser.id);
-                                usersProvider.updateTokenUsers(tokenUsersIds);
-                              });
-                            },
-                            icon: const Icon(Icons.clear))
+                          onPressed: () {
+                            setState(() {
+                              tokenUsers.remove(tokenUser);
+                              tokenUsersIds.remove(tokenUser.id);
+                              usersProvider.updateTokenUsers(tokenUsersIds);
+                            });
+                          },
+                          icon: const Icon(Icons.clear, color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -331,7 +344,9 @@ class _SearchState extends State<Search> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            border: Border.all(width: 2, color: Colors.black),
+                            border: Border.all(width: 5, color: Colors.blue),
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: const LinearGradient(colors: []),
                           ),
                           width: double.infinity,
                           margin: const EdgeInsets.all(5),

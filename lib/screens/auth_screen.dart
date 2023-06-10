@@ -1,6 +1,7 @@
 import "dart:io";
 
 import "package:chat_app/providers/users_providers.dart";
+import "package:libphonenumber/libphonenumber.dart";
 import "package:provider/provider.dart";
 
 import "../widgets/auth/auth_form.dart";
@@ -11,86 +12,146 @@ import "package:flutter/material.dart";
 
 import "chats_screen.dart";
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+// ignore: must_be_immutable
+class AuthScreen extends StatelessWidget {
+  AuthScreen({super.key});
   static const routeName = "/auth_screen";
-  @override
-  State<AuthScreen> createState() => _AuthScreenState();
-}
-
-class _AuthScreenState extends State<AuthScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Future<void> _submit(
-    String email,
-    String password,
-    String username,
+
+  late PhoneAuthCredential credential;
+
+  late String verificationId;
+  late BuildContext ctx;
+
+  late UserCredential authResult;
+
+  Future<bool> _submit(
+    bool? isCode, {
+    String? iso,
+    String? phone,
+    String? username,
+    String? code,
     File? pickedImage,
-    bool isLogin,
-  ) async {
-    final auth = FirebaseAuth.instance;
-    final authResult;
-    try {
-      if (isLogin) {
-        authResult = await auth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-      } else {
-        authResult = await auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+  }) async {
+    // if its the step when the user enter his data
+    if (isCode == null) {
+      pickedImage ??= File("unknown");
+      try {
+        authResult =
+            await FirebaseAuth.instance.signInWithCredential(credential);
         String url = "";
-        if (pickedImage == null || pickedImage.path == "unknown") {
+        if (pickedImage.path == "unknown") {
           final ref = FirebaseStorage.instance
               .ref()
               .child("users_images")
               .child("user.png");
 
           url = await ref.getDownloadURL();
-        } else if (pickedImage.path != "unknown") {
+        } else {
           final UsersProvider usersProvider =
-              Provider.of(context, listen: false);
-          url = await usersProvider.sendFile(pickedImage, authResult.user.uid);
+              Provider.of(_scaffoldKey.currentContext!, listen: false);
+          url = await usersProvider.sendFile(pickedImage, authResult.user!.uid);
+          return false;
         }
-        await FirebaseFirestore.instance
-            .collection("/users")
-            .doc(authResult.user.uid)
-            .set({
+        await FirebaseFirestore.instance.collection("/users").doc(phone).set({
           "username": username,
           "friends": [],
           "blocks": [],
           "status": "online",
-          "email": email,
           "image_url": url,
         });
-      }
-      await Navigator.of(context).pushReplacementNamed(ChatsScreen.routeName);
-    } on FirebaseAuthException catch (err) {
-      String message = "An error occurred, please try again";
-      if (err.message != null) {
-        message = err.message!;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } catch (err) {
-      String message = "An error occurred, please try again";
+        await Navigator.of(_scaffoldKey.currentContext!)
+            .pushReplacementNamed(ChatsScreen.routeName);
+        return true;
+      } on FirebaseAuthException catch (err) {
+        print("nooooooooooo here for");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
+        String message = "An error occurred, please try again";
+        if (err.message != null) {
+          message = err.message!;
+        }
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+            .hideCurrentSnackBar();
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (err) {
+        print("no here for");
+        String message = "An error occurred, please try again";
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+            .hideCurrentSnackBar();
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return false;
+    } else if (isCode == true) {
+      try {
+        credential = PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: code!);
+        return true;
+      } catch (e) {
+        print('here');
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+            .hideCurrentSnackBar();
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+            .showSnackBar(SnackBar(
+          content: Text(e.toString()),
+          duration: const Duration(seconds: 5),
           backgroundColor: Colors.red,
-        ),
+        ));
+        return false;
+      }
+    }
+    // if its the time to enter phone number
+    else {
+      bool? isNoError;
+      bool isValid = await PhoneNumberUtil.isValidPhoneNumber(
+              phoneNumber: phone!, isoCode: iso!) ??
+          false;
+      if (!isValid) {
+        return false;
+      }
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phone,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        codeSent: (String smsCode, int? resendToken) {
+          isNoError = true;
+          verificationId = smsCode;
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+        verificationFailed: (FirebaseAuthException exception) {
+          ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+              .hideCurrentSnackBar();
+
+          ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+              .showSnackBar(SnackBar(
+            content: Text(exception.message.toString()),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ));
+          isNoError = false;
+        },
       );
+      while (isNoError == null) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      return isValid && isNoError == true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    ctx = context;
     final double mediaQuery = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: true,

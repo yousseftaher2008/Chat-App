@@ -101,11 +101,11 @@ class MessageItem extends StatelessWidget {
               : null,
           onTap: isPhoto
               ? () {
-                  Navigator.of(context).pushNamed(ShowImageScreen.routeName,
-                      arguments: {
-                        "image": message,
-                        "title": "send by ${isMe ? "You" : userName}"
-                      });
+                  Navigator.of(context)
+                      .pushNamed(ShowImageScreen.routeName, arguments: {
+                    "image": message,
+                    "id": userId,
+                  });
                 }
               : null,
           child: Container(

@@ -3,11 +3,8 @@ import "package:flutter/material.dart";
 import "package:introduction_screen/introduction_screen.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
-import "chats_screen.dart";
-
 class OnboardingScreen extends StatelessWidget {
-  OnboardingScreen(this.hasData, {super.key});
-  final bool hasData;
+  OnboardingScreen({super.key});
 
   final List<PageViewModel> pageViewList = [
     PageViewModel(
@@ -61,24 +58,14 @@ class OnboardingScreen extends StatelessWidget {
         onSkip: () async {
           await storeIsViewed();
 
-          if (hasData) {
-            await Navigator.of(context)
-                .pushReplacementNamed(ChatsScreen.routeName);
-          } else {
-            await Navigator.of(context)
-                .pushReplacementNamed(AuthScreen.routeName);
-          }
+          await Navigator.of(context)
+              .pushReplacementNamed(AuthScreen.routeName);
         },
         onDone: () async {
           await storeIsViewed();
 
-          if (hasData) {
-            await Navigator.of(context)
-                .pushReplacementNamed(ChatsScreen.routeName);
-          } else {
-            await Navigator.of(context)
-                .pushReplacementNamed(AuthScreen.routeName);
-          }
+          await Navigator.of(context)
+              .pushReplacementNamed(AuthScreen.routeName);
         },
       );
 }
