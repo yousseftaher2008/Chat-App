@@ -39,30 +39,30 @@ class _ChatScreenState extends State<ChatScreen> {
               },
               child: Text(chatName),
             )
-          : Column(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pushNamed(
-                    ProfileScreen.routeName,
-                    arguments: userId,
-                  ),
-                  child: Text(
+          : GestureDetector(
+              onTap: () => Navigator.of(context).pushNamed(
+                ProfileScreen.routeName,
+                arguments: userId,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
                     chatName,
                     style: const TextStyle(color: Colors.white),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  status!,
-                  style: TextStyle(
-                    color: status == "online"
-                        ? Colors.green
-                        : const Color.fromRGBO(50, 0, 0, 1),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                  Text(
+                    status!,
+                    style: TextStyle(
+                      color: status == "online"
+                          ? Colors.green
+                          : const Color.fromRGBO(50, 0, 0, 1),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
       actions: [
         DropdownButton(

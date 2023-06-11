@@ -5,7 +5,6 @@ import "package:chat_app/screens/show_image_screen.dart";
 import "package:flutter/material.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "package:flutter/services.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -18,9 +17,6 @@ import "screens/search_screen.dart";
 
 late final bool? isViewed;
 void main() async {
-  SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences pref = await SharedPreferences.getInstance();
   isViewed = pref.getBool("isViewed");

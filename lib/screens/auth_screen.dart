@@ -53,19 +53,21 @@ class AuthScreen extends StatelessWidget {
           url = await usersProvider.sendFile(pickedImage, authResult.user!.uid);
           return false;
         }
-        await FirebaseFirestore.instance.collection("/users").doc(phone).set({
+        await FirebaseFirestore.instance
+            .collection("/users")
+            .doc(authResult.user!.uid)
+            .set({
           "username": username,
           "friends": [],
           "blocks": [],
           "status": "online",
+          "phone": phone,
           "image_url": url,
         });
         await Navigator.of(_scaffoldKey.currentContext!)
             .pushReplacementNamed(ChatsScreen.routeName);
         return true;
       } on FirebaseAuthException catch (err) {
-        print("nooooooooooo here for");
-
         String message = "An error occurred, please try again";
         if (err.message != null) {
           message = err.message!;
@@ -80,7 +82,6 @@ class AuthScreen extends StatelessWidget {
           ),
         );
       } catch (err) {
-        print("no here for");
         String message = "An error occurred, please try again";
         ScaffoldMessenger.of(_scaffoldKey.currentContext!)
             .hideCurrentSnackBar();
@@ -99,7 +100,6 @@ class AuthScreen extends StatelessWidget {
             verificationId: verificationId, smsCode: code!);
         return true;
       } catch (e) {
-        print('here');
         ScaffoldMessenger.of(_scaffoldKey.currentContext!)
             .hideCurrentSnackBar();
         ScaffoldMessenger.of(_scaffoldKey.currentContext!)
@@ -131,7 +131,6 @@ class AuthScreen extends StatelessWidget {
         verificationFailed: (FirebaseAuthException exception) {
           ScaffoldMessenger.of(_scaffoldKey.currentContext!)
               .hideCurrentSnackBar();
-
           ScaffoldMessenger.of(_scaffoldKey.currentContext!)
               .showSnackBar(SnackBar(
             content: Text(exception.message.toString()),

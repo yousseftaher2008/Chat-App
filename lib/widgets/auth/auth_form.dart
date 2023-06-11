@@ -68,6 +68,7 @@ class _AuthFormState extends State<AuthForm> {
         null,
         username: _userName,
         pickedImage: _pickedImage,
+        phone: phone,
       );
       if (!mounted) {
         return;
