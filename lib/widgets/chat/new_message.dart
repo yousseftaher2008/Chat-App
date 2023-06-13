@@ -24,7 +24,7 @@ class _NewMessageState extends State<NewMessage> {
   Future<void> _sendMessage(
       [String type = "text", String? url, String? messageId]) async {
     FocusScope.of(context).unfocus();
-    if (!_isLoading) {
+    if (!_isLoading && type == "photo") {
       return;
     }
 
@@ -33,6 +33,7 @@ class _NewMessageState extends State<NewMessage> {
       final message = _controller.text;
       _controller.clear();
       _enteredMessage = "";
+      _isShowSendButton = false;
       final UsersProvider usersProvider =
           Provider.of<UsersProvider>(context, listen: false);
 
@@ -141,6 +142,10 @@ class _NewMessageState extends State<NewMessage> {
                           if (value.trim() != "" && !_isShowSendButton) {
                             setState(() {
                               _isShowSendButton = true;
+                            });
+                          } else if (value.trim() == "") {
+                            setState(() {
+                              _isShowSendButton = false;
                             });
                           }
                         },

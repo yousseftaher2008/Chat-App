@@ -365,18 +365,16 @@ class _SearchState extends State<Search> {
                   );
           }
           return Expanded(
-            child: Center(
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                child: Text(
-                  widget.onlyFriends
-                      ? widget.searchedId == ""
-                          ? "You don't have friends"
-                          : "You haven't friends with this Id"
-                      : "There is no user with this id",
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+            child: Container(
+              margin: const EdgeInsets.all(40),
+              child: Text(
+                widget.onlyFriends
+                    ? widget.searchedId == ""
+                        ? "You don't have friends"
+                        : "You haven't friends with this Id"
+                    : "There is no user with this id",
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
           );

@@ -12,6 +12,7 @@ class ShowImageScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
+      backgroundColor: Colors.white12,
       body: Hero(
         tag: id,
         child: Center(

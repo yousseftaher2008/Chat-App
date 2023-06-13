@@ -48,18 +48,38 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: "Chat App",
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue),
-                shape: MaterialStatePropertyAll(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                ),
-                minimumSize: MaterialStateProperty.all(const Size(100, 50)),
+        // themeMode: isThemeDark == true ? ThemeMode.dark : ThemeMode.light,
+        darkTheme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(const Color(0xFF004E8D)),
+              shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
               ),
+              minimumSize: MaterialStateProperty.all(const Size(100, 50)),
             ),
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)),
+          ),
+          colorScheme: ColorScheme.fromSwatch(
+            primaryColorDark: const Color(0xFF004E8D),
+            backgroundColor: Colors.grey,
+          ),
+        ),
+        theme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.blue),
+              shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              ),
+              minimumSize: MaterialStateProperty.all(const Size(100, 50)),
+            ),
+          ),
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.blue,
+            backgroundColor: Colors.grey,
+          ),
+        ),
         home: StreamBuilder<ConnectivityResult>(
             stream: Connectivity().onConnectivityChanged,
             builder: (context, connection) {

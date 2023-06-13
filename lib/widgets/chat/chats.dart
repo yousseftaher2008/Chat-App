@@ -37,6 +37,7 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    int printed = 0;
     Widget chat_item(
       bool isGroup,
       String chatName,
@@ -47,6 +48,7 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
       String? userStatus,
       String? userId2,
     ]) {
+      printed++;
       return GestureDetector(
         onLongPress: !isGroup
             ? () async {
@@ -75,6 +77,7 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
                           TextButton(
                             onPressed: () async {
                               await usersProvider.blockUser(userId2!);
+                              setState(() {});
                               Navigator.of(context).pop();
                             },
                             child: const Text(
@@ -163,7 +166,7 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
                           if (isIn) {
                             return Column(
                               children: [
-                                if (i == doc.length - 1)
+                                if (printed != 0)
                                   const Divider(
                                     color: Colors.black54,
                                   ),
@@ -205,7 +208,7 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
 
                         return Column(
                           children: [
-                            if (i != 0)
+                            if (printed != 0)
                               const Divider(
                                 color: Colors.black54,
                               ),

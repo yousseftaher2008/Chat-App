@@ -11,6 +11,7 @@ class UsersProvider with ChangeNotifier {
   String _userId = "";
   int count = 0;
   List _tokenUsers = [];
+
   String get userId => _userId;
 
   Future<ThemeMode> get themeMode async {
@@ -496,13 +497,26 @@ class UsersProvider with ChangeNotifier {
         .collection("/chats")
         .doc(chatId)
         .collection("chat");
-    final chat = await chatData.get();
+    var chat = await chatData.get();
     for (final message in chat.docs) {
-      await chatData.doc(message.id).delete();
+      if (message["userId"] == _userId) {
+        await chatData.doc(message.id).delete();
+      }
+    }
+    chat = await chatData.get();
+    late final String lastMessage;
+    late final Timestamp lastMessageAt;
+    if (chat.docs.isEmpty) {
+      lastMessage = "";
+      lastMessageAt = Timestamp.fromDate(DateTime(2022));
+    } else {
+      final lastMessageData = chat.docs[chat.docs.length - 1];
+      lastMessage = lastMessageData[lastMessageData["type"]];
+      lastMessageAt = lastMessageData["createdAt"];
     }
     await FirebaseFirestore.instance.collection("/chats").doc(chatId).update({
-      "lastMessage": "",
-      "lastMessageAt": Timestamp.fromDate(DateTime(2022)),
+      "lastMessage": lastMessage,
+      "lastMessageAt": lastMessageAt,
     });
   }
 }

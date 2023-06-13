@@ -79,11 +79,19 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 hintText: "User Id",
                 onChanged: (_) => setState(() {}),
               ),
-              if (controller.text != "" || _isGroup)
-                Search(
-                  controller.text,
-                  onlyFriends: _isGroup,
-                ),
+              controller.text != "" || _isGroup
+                  ? Search(
+                      controller.text,
+                      onlyFriends: _isGroup,
+                    )
+                  : Container(
+                      margin: const EdgeInsets.all(40),
+                      child: const Text(
+                        "Please enter a user Id",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
             ],
           ),
         ),

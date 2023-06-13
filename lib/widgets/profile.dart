@@ -1,6 +1,7 @@
 import "package:chat_app/screens/chats_screen.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
+import "package:clipboard/clipboard.dart";
 import "package:provider/provider.dart";
 
 import "../providers/users_providers.dart";
@@ -26,6 +27,24 @@ class _ProfileState extends State<Profile> {
   bool isIconVisible = false;
   @override
   Widget build(BuildContext context) {
+    Future<void> copyPhone() async {
+      try {
+        await FlutterClipboard.copy(widget.phone);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Copied to clipboard"),
+          ),
+        );
+      } catch (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Cant't copy to clipboard"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
     final _form = GlobalKey<FormState>();
     String _userName = "";
@@ -249,21 +268,27 @@ class _ProfileState extends State<Profile> {
                         color: Colors.black45,
                         child: Container(
                           width: double.infinity,
-                          child: Text(
-                            "phone: ${widget.phone}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 20),
+                          child: GestureDetector(
+                            onLongPress: copyPhone,
+                            child: Text(
+                              "phone: ${widget.phone}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
                           ),
                         ),
                       )
                     : Container(
                         padding: const EdgeInsets.all(8),
-                        child: Text(
-                          widget.phone,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                            fontSize: 20,
+                        child: GestureDetector(
+                          onLongPress: copyPhone,
+                          child: Text(
+                            widget.phone,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
@@ -293,7 +318,7 @@ class _ProfileState extends State<Profile> {
                         ],
                       )
                     : Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.all(5),
                         width: double.infinity,
                         child: FittedBox(
                           child: Text("ID: ${widget.userId}"),

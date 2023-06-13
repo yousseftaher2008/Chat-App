@@ -8,9 +8,15 @@ import "package:provider/provider.dart";
 import "../widgets/chat/chats.dart";
 import "profile_screen.dart";
 
-class ChatsScreen extends StatelessWidget {
+class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
   static const routeName = "/chats";
+
+  @override
+  State<ChatsScreen> createState() => _ChatsScreenState();
+}
+
+class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
@@ -91,8 +97,11 @@ class ChatsScreen extends StatelessWidget {
       ),
       body: const Chats(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context)
-            .pushNamed(NewGroupScreen.routeName, arguments: false),
+        onPressed: () async {
+          await Navigator.of(context)
+              .pushNamed(NewGroupScreen.routeName, arguments: false)
+              .then((_) => setState(() {}));
+        },
         child: const Icon(Icons.person_add_alt_1_rounded),
       ),
     );
