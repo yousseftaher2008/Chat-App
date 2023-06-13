@@ -27,16 +27,12 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final UsersProvider usersProvider = Provider.of<UsersProvider>(context);
-    void showSnackBar(String content) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Can't change the $content"),
-        backgroundColor: Colors.red,
-      ));
-    }
-
-    TextEditingController _controller =
-        TextEditingController(text: widget.username);
+    final _form = GlobalKey<FormState>();
+    String _userName = "";
+    TextEditingController _controller = TextEditingController();
+    _controller.text = widget.username;
+    _controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: _controller.text.length));
     final bool _isMe = usersProvider.userId == widget.userId;
     return Scaffold(
       appBar: AppBar(
@@ -105,12 +101,23 @@ class _ProfileState extends State<Profile> {
                                       width: 150,
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(75),
-                                        child: FadeInImage(
-                                          placeholder: const AssetImage(
-                                              "assets/user.png"),
-                                          image: NetworkImage(userImage.data!),
-                                          fit: BoxFit.cover,
-                                        ),
+                                        child: userImage.data! != "unknown" &&
+                                                userImage.data! != "gUnknown"
+                                            ? FadeInImage(
+                                                placeholder: const AssetImage(
+                                                    "assets/user.png"),
+                                                image: NetworkImage(
+                                                    userImage.data!),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Center(
+                                                child: Icon(
+                                                  userImage == "gUnknown"
+                                                      ? Icons.groups
+                                                      : Icons.person,
+                                                  size: 150,
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   ),
@@ -162,150 +169,145 @@ class _ProfileState extends State<Profile> {
                           ),
                       ]),
                 ),
-                if (_isMe)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _isMe ? "Your Name" : "Name",
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.all(5),
-                        padding: const EdgeInsets.all(5),
-                        child: TextField(
-                          controller: _controller,
-                          decoration: InputDecoration(
-                            suffixIcon: isIconVisible
-                                ? GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        usersProvider
-                                            .updateUsername(_controller.text);
-                                      });
-                                    },
-                                    child: const Icon(
-                                      Icons.done_sharp,
-                                      size: 40,
-                                      color: Colors.green,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          onSubmitted: (value) {},
-                          onTap: () {
-                            isIconVisible = true;
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                if (!_isMe)
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                        border: Border(bottom: BorderSide())),
-                    child: Text(
-                      widget.username,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      _isMe ? "Your Phone" : "Profile",
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.all(15),
-                      color: Colors.black45,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                _isMe
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "${widget.phone}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
+                          const Text(
+                            "Your Name",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              _isMe ? showSnackBar("phone") : null;
-                            },
-                            icon: const Icon(
-                              Icons.edit_off_outlined,
-                              size: 40,
-                            ),
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _isMe ? "Your Id" : "Id",
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.all(15),
-                      color: Colors.black45,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          FittedBox(
-                            child: Text(
-                              "${widget.userId}",
-                              style: const TextStyle(
-                                color: Colors.white,
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            child: Form(
+                              key: _form,
+                              child: TextFormField(
+                                controller: _controller,
+                                validator: (value) => value ==
+                                            widget.username ||
+                                        value == null ||
+                                        value == ""
+                                    ? "Please enter a new username"
+                                    : value.length < 2 || value.length > 20
+                                        ? "The username must be at least 2 and most 20 characters"
+                                        : null,
+                                decoration: InputDecoration(
+                                  suffixIcon: isIconVisible
+                                      ? IconButton(
+                                          icon: const Icon(
+                                            Icons.done_sharp,
+                                            size: 40,
+                                            color: Colors.green,
+                                          ),
+                                          onPressed: () {
+                                            if (_form.currentState!
+                                                .validate()) {
+                                              FocusScope.of(context).unfocus();
+                                              usersProvider
+                                                  .updateUsername(_userName);
+                                            }
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: (value) {
+                                  _userName = value;
+                                },
+                                onFieldSubmitted: (value) {
+                                  FocusScope.of(context).unfocus();
+                                  usersProvider.updateUsername(value);
+                                },
+                                onTap: () {
+                                  isIconVisible = true;
+                                  setState(() {});
+                                },
                               ),
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              _isMe ? showSnackBar("user id") : null;
-                            },
-                            icon: const Icon(
-                              Icons.edit_off_outlined,
-                              size: 40,
-                            ),
-                            color: Colors.black,
-                          )
                         ],
+                      )
+                    : Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          widget.username,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                _isMe
+                    ? Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        color: Colors.black45,
+                        child: Container(
+                          width: double.infinity,
+                          child: Text(
+                            "phone: ${widget.phone}",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 20),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          widget.phone,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                _isMe
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            height: 3,
+                            width: double.infinity,
+                            color: Colors.black,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            color: Colors.black45,
+                            width: double.infinity,
+                            child: FittedBox(
+                              child: Text(
+                                "ID: ${widget.userId}",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        width: double.infinity,
+                        child: FittedBox(
+                          child: Text("ID: ${widget.userId}"),
+                        ),
+                      ),
+                Container(
+                  height: 3,
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  width: double.infinity,
+                  color: Colors.black,
                 ),
                 Container(
-                  margin: const EdgeInsets.all(5),
                   padding: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
                   color: Colors.red[200],
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

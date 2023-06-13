@@ -30,11 +30,19 @@ class ChatItem extends StatelessWidget {
             width: 40,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(
-                placeholder: AssetImage("assets/${assetImage}"),
-                image: NetworkImage(userImage),
-                fit: BoxFit.cover,
-              ),
+              child: userImage != "unknown" && userImage != "gUnknown"
+                  ? FadeInImage(
+                      placeholder: AssetImage("assets/${assetImage}"),
+                      image: NetworkImage(userImage),
+                      fit: BoxFit.cover,
+                    )
+                  : Center(
+                      child: Icon(
+                        userImage == "gUnknown" ? Icons.groups : Icons.person,
+                        size: 40,
+                        fill: 0.2,
+                      ),
+                    ),
             ),
           ),
           title: Text(username),

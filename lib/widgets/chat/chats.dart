@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:connectivity_plus/connectivity_plus.dart";
 import "package:provider/provider.dart";
 import "chat_item.dart";
 import "../../providers/users_providers.dart";
@@ -15,7 +14,6 @@ class Chats extends StatefulWidget {
 class _ChatsState extends State<Chats> with WidgetsBindingObserver {
   bool isInit = false;
   late UsersProvider usersProvider;
-  bool? _isConnected;
   @override
   void didChangeDependencies() {
     if (!isInit) {
@@ -29,17 +27,12 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
 
   @override
   didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      usersProvider.setStatus("offline");
-    } else {
+    if (state == AppLifecycleState.resumed) {
       usersProvider.setStatus("online");
+    } else {
+      usersProvider.setStatus("offline");
     }
     return;
-  }
-
-  checkConnection() async {
-    var result = await Connectivity().checkConnectivity();
-    _isConnected = result.name != "none";
   }
 
   @override
@@ -123,150 +116,118 @@ class _ChatsState extends State<Chats> with WidgetsBindingObserver {
       );
     }
 
-    return StreamBuilder<ConnectivityResult>(
-      stream: Connectivity().onConnectivityChanged,
-      builder: (_, connection) => FutureBuilder(
-          future: checkConnection(),
-          builder: (_, __) {
-            if (connection.data == ConnectivityResult.none ||
-                _isConnected == false) {
-              return Center(
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  padding: const EdgeInsets.all(10),
-                  child: const Card(
-                    elevation: 15,
-                    child: Center(
-                      child: Text(
-                        "Can't Connect to internet",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
-
+    return StreamBuilder(
+        stream: usersProvider.users,
+        builder: (_, usersSnapshot) {
+          if (usersSnapshot.hasData) {
+            final users = usersSnapshot.data!.docs;
             return StreamBuilder(
-                stream: usersProvider.users,
-                builder: (_, usersSnapshot) {
-                  if (usersSnapshot.hasData) {
-                    final users = usersSnapshot.data!.docs;
-                    return StreamBuilder(
-                      stream: usersProvider.stChats,
-                      builder: (_, chatsSnapshot) {
-                        if (chatsSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+              stream: usersProvider.stChats,
+              builder: (_, chatsSnapshot) {
+                if (chatsSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (chatsSnapshot.data != null) {
+                  final doc = chatsSnapshot.data!.docs;
+                  return ListView.builder(
+                      itemCount: doc.length,
+                      itemBuilder: (ctx, i) {
+                        final String userId = usersProvider.userId;
+                        late String chatName;
+                        late String chatImage;
+                        late String userStatus;
+                        late String userId2;
+                        final bool isGroup = doc[i]["type"] == "group";
+                        bool isIn = false;
+
+                        late String lastMessage;
+                        if (doc[i]["lastMessage"].length > 50) {
+                          lastMessage =
+                              "${doc[i]["lastMessage"].substring(0, 46)}...";
+                        } else {
+                          lastMessage = doc[i]["lastMessage"];
                         }
 
-                        if (chatsSnapshot.data != null) {
-                          final doc = chatsSnapshot.data!.docs;
-                          return ListView.builder(
-                              itemCount: doc.length,
-                              itemBuilder: (ctx, i) {
-                                final String userId = usersProvider.userId;
-                                late String chatName;
-                                late String chatImage;
-                                late String userStatus;
-                                late String userId2;
-                                final bool isGroup = doc[i]["type"] == "group";
-                                bool isIn = false;
-
-                                late String lastMessage;
-                                if (doc[i]["lastMessage"].length > 50) {
-                                  lastMessage =
-                                      "${doc[i]["lastMessage"].substring(0, 46)}...";
-                                } else {
-                                  lastMessage = doc[i]["lastMessage"];
-                                }
-
-                                if (doc[i]["type"] == "group") {
-                                  chatName = doc[i]["groupName"];
-                                  chatImage = doc[i]["groupImage"];
-                                  final members = doc[i]["members"];
-                                  for (var h = 0;
-                                      h < doc[i]["members"].length;
-                                      h++) {
-                                    if (members[h] == userId) {
-                                      isIn = true;
-                                    }
-                                  }
-                                  if (isIn) {
-                                    return Column(
-                                      children: [
-                                        if (i == doc.length - 1)
-                                          const Divider(
-                                            color: Colors.black54,
-                                          ),
-                                        chat_item(
-                                          isGroup,
-                                          chatName,
-                                          chatImage,
-                                          lastMessage,
-                                          doc[i].id,
-                                          doc[i]["type"],
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                  return Container();
-                                } else {
-                                  if (doc[i]["userId1"] == userId.trim()) {
-                                    for (var j = 0; j < users.length; j++) {
-                                      userId2 =
-                                          doc[i]["userId2"].toString().trim();
-                                      if (users[j].id == userId2) {
-                                        chatName = users[j]["username"];
-                                        chatImage = users[j]["image_url"];
-                                        userStatus = users[j]["status"];
-                                      }
-                                    }
-                                  } else if (doc[i]["userId2"] == userId) {
-                                    userId2 =
-                                        doc[i]["userId1"].toString().trim();
-                                    for (var j = 0; j < users.length; j++) {
-                                      if (users[j].id == userId2) {
-                                        chatName = users[j]["username"];
-                                        chatImage = users[j]["image_url"];
-                                        userStatus = users[j]["status"];
-                                      }
-                                    }
-                                  } else {
-                                    return Container();
-                                  }
-                                }
-
-                                return Column(
-                                  children: [
-                                    if (i == doc.length - 1)
-                                      const Divider(
-                                        color: Colors.black54,
-                                      ),
-                                    chat_item(
-                                      isGroup,
-                                      chatName,
-                                      chatImage,
-                                      lastMessage,
-                                      doc[i].id,
-                                      doc[i]["type"],
-                                      userStatus,
-                                      userId2,
-                                    ),
-                                  ],
-                                );
-                              });
+                        if (doc[i]["type"] == "group") {
+                          chatName = doc[i]["groupName"];
+                          chatImage = doc[i]["groupImage"];
+                          final members = doc[i]["members"];
+                          for (var h = 0; h < doc[i]["members"].length; h++) {
+                            if (members[h] == userId) {
+                              isIn = true;
+                            }
+                          }
+                          if (isIn) {
+                            return Column(
+                              children: [
+                                if (i == doc.length - 1)
+                                  const Divider(
+                                    color: Colors.black54,
+                                  ),
+                                chat_item(
+                                  isGroup,
+                                  chatName,
+                                  chatImage,
+                                  lastMessage,
+                                  doc[i].id,
+                                  doc[i]["type"],
+                                ),
+                              ],
+                            );
+                          }
+                          return Container();
+                        } else {
+                          if (doc[i]["userId1"] == userId.trim()) {
+                            for (var j = 0; j < users.length; j++) {
+                              userId2 = doc[i]["userId2"].toString().trim();
+                              if (users[j].id == userId2) {
+                                chatName = users[j]["username"];
+                                chatImage = users[j]["image_url"];
+                                userStatus = users[j]["status"];
+                              }
+                            }
+                          } else if (doc[i]["userId2"] == userId) {
+                            userId2 = doc[i]["userId1"].toString().trim();
+                            for (var j = 0; j < users.length; j++) {
+                              if (users[j].id == userId2) {
+                                chatName = users[j]["username"];
+                                chatImage = users[j]["image_url"];
+                                userStatus = users[j]["status"];
+                              }
+                            }
+                          } else {
+                            return Container();
+                          }
                         }
-                        return Container();
-                      },
-                    );
-                  }
-                  return Container();
-                });
-          }),
-    );
+
+                        return Column(
+                          children: [
+                            if (i != 0)
+                              const Divider(
+                                color: Colors.black54,
+                              ),
+                            chat_item(
+                              isGroup,
+                              chatName,
+                              chatImage,
+                              lastMessage,
+                              doc[i].id,
+                              doc[i]["type"],
+                              userStatus,
+                              userId2,
+                            ),
+                          ],
+                        );
+                      });
+                }
+                return Container();
+              },
+            );
+          }
+          return Container();
+        });
   }
 }

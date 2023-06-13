@@ -2,7 +2,6 @@ import "dart:io";
 import "dart:math";
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import "package:flutter/foundation.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
@@ -13,6 +12,17 @@ class UsersProvider with ChangeNotifier {
   int count = 0;
   List _tokenUsers = [];
   String get userId => _userId;
+
+  Future<ThemeMode> get themeMode async {
+    final currentUserData = await fuUser(_userId);
+    try {
+      return currentUserData["themeMode"] == "light"
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    } catch (e) {
+      return ThemeMode.light;
+    }
+  }
 
   Future<dynamic> isFriend(String id) async {
     bool _isFound = false;
@@ -347,10 +357,15 @@ class UsersProvider with ChangeNotifier {
 
   Future<void> setStatus(String status, [String? sign]) async {
     if (FirebaseAuth.instance.currentUser != null) {
-      _userId = FirebaseAuth.instance.currentUser!.uid.trim();
-      await FirebaseFirestore.instance.collection("users").doc(_userId).update({
-        "status": status,
-      });
+      try {
+        _userId = FirebaseAuth.instance.currentUser!.uid.trim();
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(_userId)
+            .update({
+          "status": status,
+        });
+      } catch (e) {}
     }
     if (sign == "out") {
       _userId = "";

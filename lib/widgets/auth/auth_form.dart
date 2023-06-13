@@ -250,7 +250,7 @@ class _AuthFormState extends State<AuthForm> {
                                         ? "Please enter a user name"
                                         : value.length < 5
                                             ? "Username cannot be less than 5 characters"
-                                            : value.length > 25
+                                            : value.length > 20
                                                 ? "Username cannot be longer than 25 characters"
                                                 : null,
                                     onSaved: (newValue) {

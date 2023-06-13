@@ -1,7 +1,6 @@
 import "dart:io";
 
 import "package:chat_app/widgets/profile.dart";
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
@@ -63,14 +62,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ));
       }
     }
-    final Stream<DocumentSnapshot<Map<String, dynamic>>> stream;
-    try {
-      stream = usersProvider.user(_userId);
-    } catch (e) {
-      return Container();
-    }
+
     return StreamBuilder(
-        stream: stream,
+        stream: usersProvider.user(_userId),
         builder: (context, usersSnapshot) {
           if (usersSnapshot.connectionState == ConnectionState.waiting) {
             return waitingScreen;

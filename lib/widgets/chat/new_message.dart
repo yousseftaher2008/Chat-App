@@ -1,6 +1,7 @@
 import "dart:io";
 
 import "package:chat_app/providers/users_providers.dart";
+import "package:emoji_picker_flutter/emoji_picker_flutter.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
@@ -15,17 +16,21 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   String _enteredMessage = "";
   final _controller = TextEditingController();
+
+  final FocusNode _focusNode = FocusNode();
+  bool _isShowEmoji = false;
   bool _isLoading = false;
+  bool _isShowSendButton = false;
   Future<void> _sendMessage(
       [String type = "text", String? url, String? messageId]) async {
     FocusScope.of(context).unfocus();
-    if ((_enteredMessage == "" || _controller.text == "") && !_isLoading) {
+    if (!_isLoading) {
       return;
     }
 
     try {
       final bool isPhoto = type == "photo";
-      final message = _enteredMessage.trim();
+      final message = _controller.text;
       _controller.clear();
       _enteredMessage = "";
       final UsersProvider usersProvider =
@@ -81,52 +86,87 @@ class _NewMessageState extends State<NewMessage> {
                   ],
                 ),
               )
-            : Row(children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    autocorrect: true,
-                    textCapitalization: TextCapitalization.sentences,
-                    enableSuggestions: true,
-                    decoration: InputDecoration(
-                      suffixIcon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed:
-                                _enteredMessage.trim().isEmpty && !_isLoading
+            : Column(
+                children: [
+                  Row(children: [
+                    Expanded(
+                      child: TextField(
+                        focusNode: _focusNode,
+                        controller: _controller,
+                        autocorrect: true,
+                        textCapitalization: TextCapitalization.sentences,
+                        enableSuggestions: true,
+                        onTap: () {
+                          setState(() {
+                            _isShowEmoji = false;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: _enteredMessage.trim().isEmpty &&
+                                        !_isLoading
                                     ? () => _sendPhoto(ImageSource.gallery)
                                     : null,
-                            icon: const Icon(Icons.photo),
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          IconButton(
-                            onPressed:
-                                _enteredMessage.trim().isEmpty && !_isLoading
+                                icon: const Icon(Icons.photo),
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              IconButton(
+                                onPressed: _enteredMessage.trim().isEmpty &&
+                                        !_isLoading
                                     ? () => _sendPhoto(ImageSource.camera)
                                     : null,
-                            icon: const Icon(Icons.photo_camera),
-                            color: Theme.of(context).colorScheme.primary,
+                                icon: const Icon(Icons.photo_camera),
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ],
                           ),
-                        ],
+                          prefixIcon: IconButton(
+                            icon: const Icon(Icons.emoji_emotions_outlined),
+                            onPressed: () {
+                              _isShowEmoji
+                                  ? _focusNode.requestFocus()
+                                  : _focusNode.unfocus();
+                              setState(() {
+                                _isShowEmoji = !_isShowEmoji;
+                              });
+                            },
+                          ),
+                          hintText: "send Message",
+                        ),
+                        onChanged: (value) {
+                          _enteredMessage = value;
+                          if (value.trim() != "" && !_isShowSendButton) {
+                            setState(() {
+                              _isShowSendButton = true;
+                            });
+                          }
+                        },
+                        onSubmitted: _isShowSendButton ? _sendMessage : null,
                       ),
-                      hintText: "send Message",
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _enteredMessage = value;
-                      });
-                    },
-                    onSubmitted: (_) {
-                      _enteredMessage.trim().isEmpty ? null : _sendMessage();
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed:
-                      _enteredMessage.trim().isEmpty ? null : _sendMessage,
-                )
-              ]),
+                    IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: _isShowSendButton ? _sendMessage : null,
+                    )
+                  ]),
+                  if (_isShowEmoji)
+                    SizedBox(
+                      height: 200,
+                      child: EmojiPicker(
+                        onEmojiSelected: (category, emoji) {
+                          _controller.text += emoji.emoji;
+                          if (!_isShowSendButton) {
+                            setState(() {
+                              _isShowSendButton = true;
+                            });
+                          }
+                        },
+                      ),
+                    )
+                ],
+              ),
       );
 }

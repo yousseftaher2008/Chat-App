@@ -151,7 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(child: Messages(chatId)),
+              Expanded(child: Messages(chatId, context)),
               NewMessage(chatId),
             ],
           ),

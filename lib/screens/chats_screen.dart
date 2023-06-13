@@ -7,7 +7,6 @@ import "package:provider/provider.dart";
 
 import "../widgets/chat/chats.dart";
 import "profile_screen.dart";
-import "search_screen.dart";
 
 class ChatsScreen extends StatelessWidget {
   const ChatsScreen({super.key});
@@ -75,7 +74,7 @@ class ChatsScreen extends StatelessWidget {
                     .pushNamed(ProfileScreen.routeName);
               } else if (itemIdentifier == "group") {
                 await Navigator.of(_scaffold.currentContext!)
-                    .pushNamed(NewGroupScreen.routeName)
+                    .pushNamed(NewGroupScreen.routeName, arguments: true)
                     .then((value) {
                   Provider.of<UsersProvider>(_scaffold.currentContext!,
                           listen: false)
@@ -92,8 +91,8 @@ class ChatsScreen extends StatelessWidget {
       ),
       body: const Chats(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            Navigator.of(context).pushNamed(SearchScreen.routeName),
+        onPressed: () => Navigator.of(context)
+            .pushNamed(NewGroupScreen.routeName, arguments: false),
         child: const Icon(Icons.person_add_alt_1_rounded),
       ),
     );

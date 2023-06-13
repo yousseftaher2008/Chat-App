@@ -200,7 +200,8 @@ class _SearchState extends State<Search> {
                                 children: [
                                   if (index != 0)
                                     const Divider(
-                                        color: Colors.black54, height: 3),
+                                      color: Colors.black,
+                                    ),
                                   if (isFriend.data == false)
                                     ChatItem(
                                       searchedUser["username"],
@@ -317,7 +318,9 @@ class _SearchState extends State<Search> {
                         Text(
                           tokenUser["username"],
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.blue),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                         IconButton(
                           onPressed: () {
@@ -344,13 +347,14 @@ class _SearchState extends State<Search> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            border: Border.all(width: 5, color: Colors.blue),
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(colors: []),
-                          ),
+                              border:
+                                  Border.all(width: 2, color: Colors.black26),
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xDDDDDDDD)),
                           width: double.infinity,
-                          margin: const EdgeInsets.all(5),
+                          margin: const EdgeInsets.all(10),
                           child: Wrap(
+                            alignment: WrapAlignment.center,
                             direction: Axis.horizontal,
                             children: widgets,
                           ),

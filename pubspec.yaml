@@ -33,6 +33,7 @@ dependencies:
   connectivity_plus: ^4.0.1
   country_picker: ^2.0.20
   cupertino_icons: ^1.0.5
+  emoji_picker_flutter: ^1.6.1
   firebase_auth: ^4.6.2
   firebase_core: ^2.11.0
   firebase_storage: ^11.2.2

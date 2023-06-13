@@ -58,14 +58,15 @@ class _GroupScreenState extends State<GroupScreen> {
                             widgets.add(
                               GestureDetector(
                                 onTap: () async {
-                                  Navigator.of(__).pop();
-                                  ScaffoldMessenger.of(__)
+                                  Navigator.of(ctx).pop();
+                                  ScaffoldMessenger.of(context)
                                       .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(__).showSnackBar(
+                                  ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
                                           "Sure to add ${friend["username"]}?"),
                                       backgroundColor: Colors.blue,
+                                      duration: const Duration(seconds: 5),
                                       action: SnackBarAction(
                                         textColor: Colors.white,
                                         label: "Add",
@@ -152,11 +153,23 @@ class _GroupScreenState extends State<GroupScreen> {
                           margin: const EdgeInsets.all(15),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(75),
-                            child: FadeInImage(
-                              placeholder: const AssetImage('assets/group.jpg'),
-                              image: NetworkImage(doc["groupImage"]),
-                              fit: BoxFit.cover,
-                            ),
+                            child: doc["groupImage"] != "unknown" &&
+                                    doc["groupImage"] != "gUnknown"
+                                ? FadeInImage(
+                                    placeholder:
+                                        const AssetImage("assets/group.jpg"),
+                                    image: NetworkImage(doc["groupImage"]),
+                                    fit: BoxFit.cover,
+                                  )
+                                : Center(
+                                    child: Icon(
+                                      doc["groupImage"] == "gUnknown"
+                                          ? Icons.groups
+                                          : Icons.person,
+                                      size: 150,
+                                      fill: 0.2,
+                                    ),
+                                  ),
                           ),
                         ),
                         //show the group name
